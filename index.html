@@ -1,11 +1,11 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CoRL 2026 酒局饭局</title>
+<title>CoRL 2026 Socials</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤠</text></svg>">
-<meta name="description" content="CoRL 2026（Austin, Nov 9–12）官方社交活动与会外 happy hour / dinner / lunch 汇总">
+<meta name="description" content="Every CoRL 2026 (Austin, Nov 9–12) happy hour, dinner and lunch in one place, with RSVP status and whether food is provided.">
 <style>
   :root {
     --page: #f8f8f8;
@@ -68,7 +68,7 @@
   nav.top .right { display: flex; align-items: center; gap: 16px; color: var(--tertiary); }
   .btn-ghost {
     font: inherit; cursor: pointer; border: 0; color: var(--text);
-    background: var(--switch-bg); border-radius: 8px; padding: 4px 10px;
+    background: var(--switch-bg); border-radius: 8px; padding: 4px 10px; white-space: nowrap;
   }
   .btn-ghost:hover { background: var(--line); }
 
@@ -176,7 +176,8 @@
     .meta { font-size: 14px; align-items: flex-start; }
     .meta svg { margin-top: 3px; }
     .meta span { white-space: normal; }
-    nav.top .clock { display: none; }
+    nav.top .clock, nav.top .brand .name { display: none; }
+    nav.top .right { gap: 8px; }
   }
 </style>
 </head>
@@ -186,109 +187,193 @@
 <nav class="top">
   <div class="brand">
     <span class="logo" aria-hidden="true">🤠</span>
-    <span>CoRL 2026 Socials</span>
+    <span class="name">CoRL 2026 Socials</span>
   </div>
   <div class="right">
     <span class="clock" id="clock"></span>
-    <button class="btn-ghost" id="ics">全部加入日历</button>
+    <button class="btn-ghost" id="lang" lang=""></button>
+    <button class="btn-ghost" id="ics" data-t="ics"></button>
   </div>
 </nav>
 
 <div class="page">
   <div class="head">
-    <h1>CoRL 2026 酒局饭局</h1>
-    <div class="switcher" role="group" aria-label="筛选">
-      <button data-f="all" aria-pressed="true">全部</button>
-      <button data-f="open">免审核</button>
-      <button data-f="approval">需审核</button>
-      <button data-f="full">候补</button>
-      <button data-f="official">官方</button>
+    <h1 data-t="h1"></h1>
+    <div class="switcher" role="group" id="filters">
+      <button data-f="all" aria-pressed="true" data-t="fAll"></button>
+      <button data-f="open" data-t="fOpen"></button>
+      <button data-f="approval" data-t="fApproval"></button>
+      <button data-f="full" data-t="fFull"></button>
+      <button data-f="official" data-t="fOfficial"></button>
     </div>
   </div>
   <p class="sub" id="sub"></p>
 
   <main class="timeline" id="list"></main>
 
-  <h2 class="section-title">未确认的线索</h2>
-  <div class="note-card">
-    <ul>
-      <li><b>Sieve</b>：CoRL 赞助商，表示会期内办几场 researcher dinner，无公开报名，需私信或通过 <a href="https://sieve.ai/contact">sieve.ai/contact</a> 联系（<a href="https://www.linkedin.com/posts/sievedata_were-excited-to-join-conference-on-robot-activity-7515501300399132673-Y0-U">来源</a>）。</li>
-      <li><b>Bedrock Robotics「CoRL After Dark」</b>：仅在 X 搜索摘要中出现，时间、地点、报名链接未知，可能与 NVIDIA 合办的 Rainey Street 场为同一活动。</li>
-    </ul>
-  </div>
+  <h2 class="section-title" data-t="leadsTitle"></h2>
+  <div class="note-card" data-t="leads"></div>
 
-  <h2 class="section-title">赶场建议</h2>
-  <div class="note-card">
-    <ul>
-      <li><b>周二 11/10 晚</b>有 6 场撞在 18:00–21:00。见投资人 / 创业圈 → Robots On Rainey Street；研究交流加吃饭 → Saturday Robotics；想稳 → The Future of Robot Learning（免审核）。Dexmate 和 Gritt 都在 Congress Ave 附近，可以先去一场再赶下一场。</li>
-      <li><b>周三 11/11</b>：16:00 CRV（Rainey St）→ 18:00 Torc（就在主会场 Hilton 里）。</li>
-      <li>大部分活动需要主办方审核，名额在持续减少，越早报名越好。</li>
-      <li>会期内每天刷一下 <a href="https://luma.com/austin">luma.com/austin</a>，会有新活动出现。</li>
-    </ul>
-  </div>
+  <h2 class="section-title" data-t="tipsTitle"></h2>
+  <div class="note-card" data-t="tips"></div>
 
-  <footer>
-    <p>信息来自 corl.org、Luma 公开页面、X 和 LinkedIn 公开帖子；人数和名额为 2026-11-02 的快照，以各活动页面为准。Partiful、微信群等邀请制活动无法检索，实际活动会更多。非 CoRL 或 Luma 官方页面。</p>
-  </footer>
+  <footer data-t="footer"></footer>
 </div>
 
 <script>
 // Times are conference-local (CST, UTC-6). status: official | open | approval | full
 // food: what the host's description says is provided
 // me: T.Z.'s Luma registration (going | pending | waitlist | none)
+// Text fields are either a plain string (same in both languages) or { en, zh }.
 const EVENTS = [
   { day: "11-09", start: "17:00", end: "19:00", title: "Rooftop Happy Hour: Physical AI Data & Sim Infra",
-    host: "AI Circle × Midcentury", place: "Congress Ave 一带屋顶 · 审核通过后显示地点",
-    status: "approval", guests: 30, food: "🥂 饮品 + 小食", me: "none", url: "https://luma.com/u6rr5lql", cover: "ng/bbb68891-a8b5-4966-b7df-9818f345ab6d.png" },
+    host: "AI Circle × Midcentury",
+    place: { en: "Rooftop near Congress Ave · address shown after approval", zh: "Congress Ave 一带屋顶 · 审核通过后显示地点" },
+    status: "approval", guests: 30, food: { en: "🥂 Drinks + bites", zh: "🥂 饮品 + 小食" }, me: "none", url: "https://luma.com/u6rr5lql", cover: "ng/bbb68891-a8b5-4966-b7df-9818f345ab6d.png" },
   { day: "11-09", start: "18:00", end: "20:00", title: "Gento Robotics Happy Hour - CoRL 2026",
-    host: "Gento Robotics", sponsor: "PokeBot、Calder", place: "Congress Ave 屋顶 · 审核通过后显示地点",
-    status: "approval", guests: 95, food: "🍻 酒水 + 餐食", me: "pending", url: "https://luma.com/6ua2bbzf", cover: "83/9a5173b0-4a5d-4c1e-ae31-79309570acfe.png" },
-  { day: "11-09", start: "19:00", end: "22:00", title: "官方欢迎晚宴 · 餐车、现场音乐、机器人乐队",
-    host: "CoRL 2026", place: "The Long Center, 701 W Riverside Dr · 有接驳车",
-    status: "official", food: "🌮 餐车晚餐", url: "https://www.corl.org/attending/venue-information", emoji: "🤠", gen: 1 },
+    host: "Gento Robotics", sponsor: { en: "PokeBot, Calder", zh: "PokeBot、Calder" },
+    place: { en: "Congress Ave rooftop · address shown after approval", zh: "Congress Ave 屋顶 · 审核通过后显示地点" },
+    status: "approval", guests: 95, food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, me: "pending", url: "https://luma.com/6ua2bbzf", cover: "83/9a5173b0-4a5d-4c1e-ae31-79309570acfe.png" },
+  { day: "11-09", start: "19:00", end: "22:00",
+    title: { en: "Official Welcome Dinner · food trucks, live music, robot band", zh: "官方欢迎晚宴 · 餐车、现场音乐、机器人乐队" },
+    host: "CoRL 2026",
+    place: { en: "The Long Center, 701 W Riverside Dr · shuttles provided", zh: "The Long Center, 701 W Riverside Dr · 有接驳车" },
+    status: "official", food: { en: "🌮 Food-truck dinner", zh: "🌮 餐车晚餐" }, url: "https://www.corl.org/attending/venue-information", emoji: "🤠", gen: 1 },
 
   { day: "11-10", start: "12:00", end: "13:30", title: "Women & Allies Lunch",
-    host: "CoRL 2026", sponsor: "Toyota Research Institute", place: "Hilton Austin · Google 表单报名，限 80 人",
-    status: "official", food: "🥗 午餐", url: "https://forms.gle/ES3NnWmgJZDVpRJYA", emoji: "🥗", gen: 2 },
-  { day: "11-10", start: "12:00", end: "14:00", title: "the robotics decade: tasks — 创始人 / 研究者午餐",
-    host: "0 State · Scale AI、Palatial", place: "Waller Creek 一带屋顶 · 审核通过后显示地点",
-    status: "approval", food: "🥗 午餐", me: "pending", url: "https://luma.com/l8lqxxwb", cover: "st/9fd8fbe2-c919-4ac6-bcd5-5a89786892b9.png" },
+    host: "CoRL 2026", sponsor: "Toyota Research Institute",
+    place: { en: "Hilton Austin · Google Form RSVP, 80 spots", zh: "Hilton Austin · Google 表单报名，限 80 人" },
+    status: "official", food: { en: "🥗 Lunch", zh: "🥗 午餐" }, url: "https://forms.gle/ES3NnWmgJZDVpRJYA", emoji: "🥗", gen: 2 },
+  { day: "11-10", start: "12:00", end: "14:00",
+    title: { en: "the robotics decade: tasks — founder / researcher lunch", zh: "the robotics decade: tasks — 创始人 / 研究者午餐" },
+    host: { en: "0 State · Scale AI, Palatial", zh: "0 State · Scale AI、Palatial" },
+    place: { en: "Rooftop near Waller Creek · address shown after approval", zh: "Waller Creek 一带屋顶 · 审核通过后显示地点" },
+    status: "approval", food: { en: "🥗 Lunch", zh: "🥗 午餐" }, me: "pending", url: "https://luma.com/l8lqxxwb", cover: "st/9fd8fbe2-c919-4ac6-bcd5-5a89786892b9.png" },
   { day: "11-10", start: "18:00", end: "21:00", title: "Robots On Rainey Street: A Night at CoRL 2026",
-    host: "Samsung Next · Radical Ventures · NVIDIA · CoreWeave", place: "Rainey Street · 审核通过后显示地点",
-    status: "approval", food: "🍻 酒水 + 餐食", me: "pending", url: "https://luma.com/fhjn0lmd", cover: "xt/c31b95f8-2618-4499-9ff6-2b5d94aaded5.png" },
+    host: "Samsung Next · Radical Ventures · NVIDIA · CoreWeave",
+    place: { en: "Rainey Street · address shown after approval", zh: "Rainey Street · 审核通过后显示地点" },
+    status: "approval", food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, me: "pending", url: "https://luma.com/fhjn0lmd", cover: "xt/c31b95f8-2618-4499-9ff6-2b5d94aaded5.png" },
   { day: "11-10", start: "18:00", end: "21:00", title: "CoRL 2026 Junfan × GenRobot × Saturday Robotics Research Night",
-    host: "Junfan Zhu · GenRobot · Saturday Robotics", place: "6th St 一带 18 楼 · 离会场步行 6 分钟",
-    status: "open", guests: 73, food: "🍱 亚洲自助晚餐 + 酒水", me: "going", url: "https://luma.com/x0kxyiv2", cover: "xy/8cdd7de1-a390-4419-a02e-e327613b0e8d.png" },
+    host: "Junfan Zhu · GenRobot · Saturday Robotics",
+    place: { en: "18th floor near 6th St · 6-min walk from the venue", zh: "6th St 一带 18 楼 · 离会场步行 6 分钟" },
+    status: "open", guests: 73, food: { en: "🍱 Asian buffet dinner + drinks", zh: "🍱 亚洲自助晚餐 + 酒水" }, me: "going", url: "https://luma.com/x0kxyiv2", cover: "xy/8cdd7de1-a390-4419-a02e-e327613b0e8d.png" },
   { day: "11-10", start: "18:30", end: "21:00", title: "Bots & Boots 🤖🤠 The Dexmate CoRL Afterparty",
     host: "Dexmate", place: "Speakeasy, 412 Congress Ave",
-    status: "approval", guests: 84, food: "🍻 酒水 + 餐食", me: "pending", url: "https://luma.com/7ihu11na", cover: "sc/817aa937-f044-4ad6-bc08-8b4b14d9fdac.png" },
+    status: "approval", guests: 84, food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, me: "pending", url: "https://luma.com/7ihu11na", cover: "sc/817aa937-f044-4ad6-bc08-8b4b14d9fdac.png" },
   { day: "11-10", start: "18:30", end: "21:00", title: "The Future of Robot Learning",
     host: "PyTorch ATX × Austin Robotics", place: "Antler VC, 800 Brazos St #340",
-    status: "open", guests: 85, food: "🍕 披萨 + 小食 + 饮品", me: "going", url: "https://luma.com/zskz4acb", cover: "7v/ce6b091b-81f7-4316-a620-0c6bc203a8c5.jpg" },
+    status: "open", guests: 85, food: { en: "🍕 Pizza + snacks + drinks", zh: "🍕 披萨 + 小食 + 饮品" }, me: "going", url: "https://luma.com/zskz4acb", cover: "7v/ce6b091b-81f7-4316-a620-0c6bc203a8c5.jpg" },
   { day: "11-10", start: "19:00", end: "21:00", title: "Gritt Happy Hour @ CoRL 2026",
-    host: "Gritt AI", place: "离会场步行 3 分钟 · 审核通过后显示地点",
-    status: "approval", food: "🍻 酒水 + 小食", me: "pending", url: "https://luma.com/xldm6sep", cover: "77/f31eb4cc-ce02-4d50-9583-1eaf11598abc.png" },
+    host: "Gritt AI",
+    place: { en: "3-min walk from the venue · address shown after approval", zh: "离会场步行 3 分钟 · 审核通过后显示地点" },
+    status: "approval", food: { en: "🍻 Drinks + appetizers", zh: "🍻 酒水 + 小食" }, me: "pending", url: "https://luma.com/xldm6sep", cover: "77/f31eb4cc-ce02-4d50-9583-1eaf11598abc.png" },
 
-  { day: "11-11", start: "15:00", end: "17:00", approx: true, title: "官方告别甜点招待会",
+  { day: "11-11", start: "15:00", end: "17:00", approx: true,
+    title: { en: "Official Farewell Dessert Reception", zh: "官方告别甜点招待会" },
     host: "CoRL 2026", place: "Bass Concert Hall, UT Austin",
-    status: "official", food: "🍰 甜点", url: "https://www.corl.org/attending/venue-information", emoji: "🍰", gen: 3 },
+    status: "official", food: { en: "🍰 Desserts", zh: "🍰 甜点" }, url: "https://www.corl.org/attending/venue-information", emoji: "🍰", gen: 3 },
   { day: "11-11", start: "16:00", end: "19:00", title: "Physical AI Night",
-    host: "CRV × LanceDB × Orchestral Labs", place: "Rainey Street · 审核通过后显示地点",
-    status: "approval", guests: 37, food: "🍺 酒水 · 未提餐食", me: "pending", url: "https://luma.com/e9menn5c", cover: "lg/8d34f886-58c6-4076-ab78-2ae0de75a2a6.png" },
+    host: "CRV × LanceDB × Orchestral Labs",
+    place: { en: "Rainey Street · address shown after approval", zh: "Rainey Street · 审核通过后显示地点" },
+    status: "approval", guests: 37, food: { en: "🍺 Drinks · food not mentioned", zh: "🍺 酒水 · 未提餐食" }, me: "pending", url: "https://luma.com/e9menn5c", cover: "lg/8d34f886-58c6-4076-ab78-2ae0de75a2a6.png" },
   { day: "11-11", start: "17:30", end: "20:30", title: "Samsung Robotics: Night at CoRL",
     host: "Samsung Research America", place: "Downtown Austin",
-    status: "full", guests: 80, food: "🍻 酒水 + 餐食", me: "waitlist", url: "https://luma.com/dw26an5o", cover: "rx/1f8df759-aacc-4d67-9a4e-aa08cd5a4d23.png" },
+    status: "full", guests: 80, food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, me: "waitlist", url: "https://luma.com/dw26an5o", cover: "rx/1f8df759-aacc-4d67-9a4e-aa08cd5a4d23.png" },
   { day: "11-11", start: "18:00", end: "20:00", title: "Torc Happy Hour @ CoRL",
-    host: "Torc Robotics", place: "Austin Taco Project, 500 E 4th St（Hilton 内）",
-    status: "approval", food: "🍻 酒水 + 小食", me: "none", url: "https://luma.com/torc_corl_2026", cover: "ce/bf52a088-e26e-4065-85ec-fc3713ca86f7.png" },
+    host: "Torc Robotics",
+    place: { en: "Austin Taco Project, 500 E 4th St (inside the Hilton)", zh: "Austin Taco Project, 500 E 4th St（Hilton 内）" },
+    status: "approval", food: { en: "🍻 Drinks + appetizers", zh: "🍻 酒水 + 小食" }, me: "none", url: "https://luma.com/torc_corl_2026", cover: "ce/bf52a088-e26e-4065-85ec-fc3713ca86f7.png" },
   { day: "11-11", start: "18:30", end: "21:00", title: "Physical AI After Hours · CoRL Edition",
     host: "Circuit Launch × AXIS Connect", place: "Texas Robotics, 2501 Wichita St",
-    status: "approval", guests: 56, food: "🍺 啤酒 · 未提餐食", me: "going", url: "https://luma.com/w88rdxbl", cover: "bt/7b7ee200-856e-4ee4-9787-224ad5e58305.jpg" },
+    status: "approval", guests: 56, food: { en: "🍺 Beer · food not mentioned", zh: "🍺 啤酒 · 未提餐食" }, me: "going", url: "https://luma.com/w88rdxbl", cover: "bt/7b7ee200-856e-4ee4-9787-224ad5e58305.jpg" },
 ];
 
-const WEEKDAY = { "11-09": "星期一", "11-10": "星期二", "11-11": "星期三" };
-const LABEL = { official: "官方", open: "免审核", approval: "需审核", full: "候补名单" };
-const ME = { going: "T.Z. 参加", pending: "T.Z. 待审核", waitlist: "T.Z. 候补中", none: "T.Z. 未报名" };
+const DAYS = ["11-09", "11-10", "11-11"];
+
+const T = {
+  en: {
+    pageTitle: "CoRL 2026 Socials",
+    h1: "CoRL 2026 Happy Hours & Dinners",
+    ics: "Add all to calendar",
+    langBtn: "中文",
+    fAll: "All", fOpen: "Open RSVP", fApproval: "Approval", fFull: "Waitlist", fOfficial: "Official",
+    filtersLabel: "Filter",
+    label: { official: "Official", open: "Open RSVP", approval: "Needs approval", full: "Waitlist" },
+    me: { going: "T.Z. going", pending: "T.Z. pending", waitlist: "T.Z. waitlisted", none: "T.Z. not registered" },
+    meTitle: "T.Z.'s RSVP status on Luma",
+    foodTitle: "Food and drinks the host says are provided",
+    weekday: { "11-09": "Monday", "11-10": "Tuesday", "11-11": "Wednesday" },
+    date: (mo, d) => `Nov ${d}`,
+    by: (host, sponsor) => `By ${host}${sponsor ? ` · Sponsored by ${sponsor}` : ""}`,
+    going: n => `${n} going`,
+    cal: "Calendar",
+    approx: "Afternoon · see the official schedule",
+    empty: "No events match this filter",
+    sub: (c, mine) => `Austin, TX · Nov 9–12 · ${c.total} events (${c.official} official, ${c.open} open RSVP) · Updated Nov 2 · T.Z.: ${mine.going} going, ${mine.pending} pending, ${mine.waitlist} waitlisted`,
+    leadsTitle: "Unconfirmed leads",
+    leads: `<ul>
+      <li><b>Sieve</b>: a CoRL sponsor that says it's hosting a few researcher dinners during the week. There's no public RSVP; DM them or reach out via <a href="https://sieve.ai/contact">sieve.ai/contact</a> (<a href="https://www.linkedin.com/posts/sievedata_were-excited-to-join-conference-on-robot-activity-7515501300399132673-Y0-U">source</a>).</li>
+      <li><b>Bedrock Robotics "CoRL After Dark"</b>: only seen in an X search snippet. Time, venue and RSVP link are unknown. It may be the same NVIDIA co-hosted night on Rainey Street.</li>
+    </ul>`,
+    tipsTitle: "Planning tips",
+    tips: `<ul>
+      <li><b>Tuesday 11/10 evening</b> has 6 events between 18:00 and 21:00. Meeting investors and founders → Robots On Rainey Street. Research chat plus dinner → Saturday Robotics. Safe bet → The Future of Robot Learning (open RSVP). Dexmate and Gritt are both near Congress Ave, so you can go to one and walk to the next.</li>
+      <li><b>Wednesday 11/11</b>: 16:00 CRV (Rainey St) → 18:00 Torc (inside the Hilton, the main venue).</li>
+      <li>Most events need host approval and spots keep running out, so apply early.</li>
+      <li>Check <a href="https://luma.com/austin">luma.com/austin</a> every day during the conference; new events keep appearing.</li>
+    </ul>`,
+    footer: `<p>Compiled from corl.org, public Luma pages, and public posts on X and LinkedIn. Attendance and capacity are a snapshot from Nov 2, 2026; each event page has the latest. Invite-only events (Partiful, group chats) aren't covered, so there are more out there. Not affiliated with CoRL or Luma.</p>`,
+  },
+  zh: {
+    pageTitle: "CoRL 2026 酒局饭局",
+    h1: "CoRL 2026 酒局饭局",
+    ics: "全部加入日历",
+    langBtn: "EN",
+    fAll: "全部", fOpen: "免审核", fApproval: "需审核", fFull: "候补", fOfficial: "官方",
+    filtersLabel: "筛选",
+    label: { official: "官方", open: "免审核", approval: "需审核", full: "候补名单" },
+    me: { going: "T.Z. 参加", pending: "T.Z. 待审核", waitlist: "T.Z. 候补中", none: "T.Z. 未报名" },
+    meTitle: "T.Z. 在 Luma 上的报名状态",
+    foodTitle: "主办方描述中提到的吃喝",
+    weekday: { "11-09": "星期一", "11-10": "星期二", "11-11": "星期三" },
+    date: (mo, d) => `${mo}月${d}日`,
+    by: (host, sponsor) => `由 ${host} 主办${sponsor ? ` · ${sponsor} 赞助` : ""}`,
+    going: n => `${n} 人参加`,
+    cal: "日历",
+    approx: "下午 · 具体时间以官方日程为准",
+    empty: "没有符合条件的活动",
+    sub: (c, mine) => `Austin, TX · 11月9日–12日 · ${c.total} 场活动（${c.official} 场官方、${c.open} 场免审核）· 数据更新于 11月2日 · T.Z.：${mine.going} 场参加、${mine.pending} 场待审核、${mine.waitlist} 场候补`,
+    leadsTitle: "未确认的线索",
+    leads: `<ul>
+      <li><b>Sieve</b>：CoRL 赞助商，表示会期内办几场 researcher dinner，无公开报名，需私信或通过 <a href="https://sieve.ai/contact">sieve.ai/contact</a> 联系（<a href="https://www.linkedin.com/posts/sievedata_were-excited-to-join-conference-on-robot-activity-7515501300399132673-Y0-U">来源</a>）。</li>
+      <li><b>Bedrock Robotics「CoRL After Dark」</b>：仅在 X 搜索摘要中出现，时间、地点、报名链接未知，可能与 NVIDIA 合办的 Rainey Street 场为同一活动。</li>
+    </ul>`,
+    tipsTitle: "赶场建议",
+    tips: `<ul>
+      <li><b>周二 11/10 晚</b>有 6 场撞在 18:00–21:00。见投资人 / 创业圈 → Robots On Rainey Street；研究交流加吃饭 → Saturday Robotics；想稳 → The Future of Robot Learning（免审核）。Dexmate 和 Gritt 都在 Congress Ave 附近，可以先去一场再赶下一场。</li>
+      <li><b>周三 11/11</b>：16:00 CRV（Rainey St）→ 18:00 Torc（就在主会场 Hilton 里）。</li>
+      <li>大部分活动需要主办方审核，名额在持续减少，越早报名越好。</li>
+      <li>会期内每天刷一下 <a href="https://luma.com/austin">luma.com/austin</a>，会有新活动出现。</li>
+    </ul>`,
+    footer: `<p>信息来自 corl.org、Luma 公开页面、X 和 LinkedIn 公开帖子；人数和名额为 2026-11-02 的快照，以各活动页面为准。Partiful、微信群等邀请制活动无法检索，实际活动会更多。非 CoRL 或 Luma 官方页面。</p>`,
+  },
+};
+
+// English by default; ?lang=zh (or the /zh/ shortcut) or a remembered choice switches to Chinese.
+function initialLang() {
+  const q = new URLSearchParams(location.search).get("lang");
+  if (q === "en" || q === "zh") return q;
+  try {
+    const saved = localStorage.getItem("lang");
+    if (saved === "en" || saved === "zh") return saved;
+  } catch (err) {}
+  return "en";
+}
+let lang = initialLang();
+let filter = "all";
+const t = () => T[lang];
+const L = v => (v && typeof v === "object" ? v[lang] : v);
+
 const CDN = "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=120,height=120/uploads/";
 
 const ICON = {
@@ -310,7 +395,7 @@ const hm = (d, tz) => new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute
 
 // Like Luma: viewer's local time first; if they're not on Austin time, add the event-local time in amber.
 function timeLabel(e) {
-  if (e.approx) return "下午 · 具体时间以官方日程为准";
+  if (e.approx) return esc(t().approx);
   const d = toDate(e.day, e.start);
   const local = hm(d);
   const austin = hm(d, "America/Chicago");
@@ -320,10 +405,10 @@ function timeLabel(e) {
 function gcalLink(e) {
   const p = new URLSearchParams({
     action: "TEMPLATE",
-    text: e.title,
+    text: L(e.title),
     dates: `${stamp(toDate(e.day, e.start))}/${stamp(toDate(e.day, e.end))}`,
-    details: `${e.host}\n${e.url}`,
-    location: e.place,
+    details: `${L(e.host)}\n${e.url}`,
+    location: L(e.place),
   });
   return "https://calendar.google.com/calendar/render?" + p.toString();
 }
@@ -333,28 +418,29 @@ function cover(e) {
   return `<div class="cover gen-${e.gen}">${e.emoji}</div>`;
 }
 
-function render(filter) {
+function render() {
+  const s = t();
   let html = "";
-  for (const day of Object.keys(WEEKDAY)) {
+  for (const day of DAYS) {
     const items = EVENTS.filter(e => e.day === day && (filter === "all" || e.status === filter));
     if (!items.length) continue;
     const [mo, d] = day.split("-").map(Number);
     html += `<section class="day">
-      <div class="day-label"><div class="date">${mo}月${d}日</div><div class="weekday">${WEEKDAY[day]}</div></div>
+      <div class="day-label"><div class="date">${s.date(mo, d)}</div><div class="weekday">${s.weekday[day]}</div></div>
       <div class="cards">`;
     for (const e of items) {
       html += `<article class="card">
         <div class="body">
           <div class="time">${timeLabel(e)}</div>
-          <h3><a href="${e.url}" target="_blank" rel="noopener">${esc(e.title)}</a></h3>
-          <div class="meta">${ICON.host}<span>由 ${esc(e.host)} 主办${e.sponsor ? ` · ${esc(e.sponsor)} 赞助` : ""}</span></div>
-          <div class="meta">${ICON.pin}<span>${esc(e.place)}</span></div>
+          <h3><a href="${e.url}" target="_blank" rel="noopener">${esc(L(e.title))}</a></h3>
+          <div class="meta">${ICON.host}<span>${esc(s.by(L(e.host), L(e.sponsor)))}</span></div>
+          <div class="meta">${ICON.pin}<span>${esc(L(e.place))}</span></div>
           <div class="foot">
-            ${e.me ? `<span class="me ${e.me}" title="T.Z. 在 Luma 上的报名状态">${ME[e.me]}</span>` : ""}
-            <span class="pill ${e.status}">${LABEL[e.status]}</span>
-            ${e.food ? `<span class="food" title="主办方描述中提到的吃喝">${esc(e.food)}</span>` : ""}
-            ${e.guests ? `<span class="count">${e.guests} 人参加</span>` : ""}
-            ${e.approx ? "" : `<a class="cal" href="${gcalLink(e)}" target="_blank" rel="noopener">${ICON.cal}日历</a>`}
+            ${e.me ? `<span class="me ${e.me}" title="${esc(s.meTitle)}">${s.me[e.me]}</span>` : ""}
+            <span class="pill ${e.status}">${s.label[e.status]}</span>
+            ${e.food ? `<span class="food" title="${esc(s.foodTitle)}">${esc(L(e.food))}</span>` : ""}
+            ${e.guests ? `<span class="count">${s.going(e.guests)}</span>` : ""}
+            ${e.approx ? "" : `<a class="cal" href="${gcalLink(e)}" target="_blank" rel="noopener">${ICON.cal}${s.cal}</a>`}
           </div>
         </div>
         ${cover(e)}
@@ -362,15 +448,34 @@ function render(filter) {
     }
     html += `</div></section>`;
   }
-  document.getElementById("list").innerHTML = html || `<p class="empty">没有符合条件的活动</p>`;
+  document.getElementById("list").innerHTML = html || `<p class="empty">${esc(s.empty)}</p>`;
 }
 
-const n = s => EVENTS.filter(e => e.status === s).length;
-document.getElementById("sub").textContent =
-  `Austin, TX · 11月9日–12日 · ${EVENTS.length} 场活动（${n("official")} 场官方、${n("open")} 场免审核）· 数据更新于 11月2日`;
-const mine = s => EVENTS.filter(e => e.me === s).length;
-document.getElementById("sub").textContent +=
-  ` · T.Z.：${mine("going")} 场参加、${mine("pending")} 场待审核、${mine("waitlist")} 场候补`;
+function applyLang() {
+  const s = t();
+  document.documentElement.lang = lang === "zh" ? "zh-CN" : "en";
+  document.title = s.pageTitle;
+  document.querySelectorAll("[data-t]").forEach(el => { el.innerHTML = s[el.dataset.t]; });
+  document.getElementById("filters").setAttribute("aria-label", s.filtersLabel);
+  const btn = document.getElementById("lang");
+  btn.textContent = s.langBtn;
+  btn.lang = lang === "zh" ? "en" : "zh-CN";
+  const count = st => EVENTS.filter(e => e.status === st).length;
+  const mine = st => EVENTS.filter(e => e.me === st).length;
+  document.getElementById("sub").textContent = s.sub(
+    { total: EVENTS.length, official: count("official"), open: count("open") },
+    { going: mine("going"), pending: mine("pending"), waitlist: mine("waitlist") });
+  render();
+}
+
+document.getElementById("lang").addEventListener("click", () => {
+  lang = lang === "en" ? "zh" : "en";
+  try { localStorage.setItem("lang", lang); } catch (err) {}
+  const url = new URL(location.href);
+  url.searchParams.set("lang", lang);
+  history.replaceState(null, "", url);
+  applyLang();
+});
 
 function tick() {
   document.getElementById("clock").textContent = "Austin " + hm(new Date(), "America/Chicago");
@@ -379,7 +484,7 @@ tick();
 setInterval(tick, 30000);
 
 document.getElementById("ics").addEventListener("click", () => {
-  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//corl2026-socials//CN"];
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//corl2026-socials//EN"];
   const icsEsc = s => String(s).replace(/[\\,;]/g, m => "\\" + m).replace(/\n/g, "\\n");
   for (const e of EVENTS) {
     if (e.approx) continue;
@@ -388,9 +493,9 @@ document.getElementById("ics").addEventListener("click", () => {
       `DTSTAMP:${stamp(new Date())}`,
       `DTSTART:${stamp(toDate(e.day, e.start))}`,
       `DTEND:${stamp(toDate(e.day, e.end))}`,
-      `SUMMARY:${icsEsc(e.title)}`,
-      `LOCATION:${icsEsc(e.place)}`,
-      `DESCRIPTION:${icsEsc(e.host + "\n" + LABEL[e.status] + "\n" + e.url)}`,
+      `SUMMARY:${icsEsc(L(e.title))}`,
+      `LOCATION:${icsEsc(L(e.place))}`,
+      `DESCRIPTION:${icsEsc(L(e.host) + "\n" + t().label[e.status] + "\n" + e.url)}`,
       `URL:${e.url}`,
       "END:VEVENT");
   }
@@ -406,10 +511,11 @@ document.querySelectorAll(".switcher button").forEach(btn => {
   btn.addEventListener("click", () => {
     document.querySelectorAll(".switcher button").forEach(b => b.setAttribute("aria-pressed", "false"));
     btn.setAttribute("aria-pressed", "true");
-    render(btn.dataset.f);
+    filter = btn.dataset.f;
+    render();
   });
 });
-render("all");
+applyLang();
 </script>
 </body>
 </html>
