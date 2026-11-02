@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CoRL 2026 酒局饭局</title>
+<meta name="description" content="CoRL 2026（Austin, Nov 9–12）官方社交活动与会外 happy hour / dinner / lunch 汇总">
+<style>
+  :root {
+    --bg: #faf8f5;
+    --surface: #ffffff;
+    --text: #1d1b19;
+    --muted: #6b655e;
+    --line: #e7e1d8;
+    --accent: #bf5700;
+    --open: #1f7a4d;
+    --open-bg: #e3f3ea;
+    --approval: #8a5a00;
+    --approval-bg: #fbf0d9;
+    --full: #a33a3a;
+    --full-bg: #f8e3e3;
+    --official: #2f4f9e;
+    --official-bg: #e4eafa;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #151413;
+      --surface: #1f1d1b;
+      --text: #ece8e3;
+      --muted: #a39b92;
+      --line: #34302c;
+      --accent: #f08a3c;
+      --open: #6fd3a0;
+      --open-bg: #183a2a;
+      --approval: #f0c46a;
+      --approval-bg: #3a2f17;
+      --full: #f09a9a;
+      --full-bg: #3d1f1f;
+      --official: #9db4f0;
+      --official-bg: #1e2a47;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Segoe UI", sans-serif;
+  }
+  a { color: var(--accent); }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+  header h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.01em; }
+  header .sub { color: var(--muted); margin: 0 0 16px; }
+  .stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
+  .stat b { font-size: 18px; margin-right: 4px; }
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 24px; position: sticky; top: 0; background: var(--bg); padding: 10px 0; z-index: 1; }
+  .filters button {
+    font: inherit; font-size: 14px; cursor: pointer;
+    border: 1px solid var(--line); background: var(--surface); color: var(--text);
+    border-radius: 999px; padding: 4px 14px;
+  }
+  .filters button[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
+  h2.day { font-size: 18px; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--accent); }
+  h2.day small { color: var(--muted); font-weight: normal; font-size: 14px; margin-left: 8px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; margin-bottom: 10px;
+    display: grid; grid-template-columns: 112px 1fr; gap: 4px 16px;
+  }
+  .time { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .title { font-weight: 600; font-size: 16px; }
+  .meta { color: var(--muted); font-size: 14px; }
+  .row { grid-column: 2; }
+  .tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
+  .tag { font-size: 12px; padding: 1px 8px; border-radius: 6px; white-space: nowrap; }
+  .tag.open { color: var(--open); background: var(--open-bg); }
+  .tag.approval { color: var(--approval); background: var(--approval-bg); }
+  .tag.full { color: var(--full); background: var(--full-bg); }
+  .tag.official { color: var(--official); background: var(--official-bg); }
+  .links { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; margin-top: 6px; }
+  .note { font-size: 13px; color: var(--muted); }
+  section.tips, section.leads, footer { margin-top: 36px; }
+  section h2 { font-size: 18px; }
+  ul { padding-left: 20px; }
+  footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
+  @media (max-width: 560px) {
+    .card { grid-template-columns: 1fr; }
+    .row { grid-column: 1; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>CoRL 2026 酒局饭局</h1>
+    <p class="sub">Austin, TX · 主会 11/9–11 · Workshop 11/12 · 时间均为美国中部时间（CST）· 数据更新于 2026-11-02</p>
+    <div class="stats" id="stats"></div>
+  </header>
+
+  <div class="filters" role="group" aria-label="筛选">
+    <button data-f="all" aria-pressed="true">全部</button>
+    <button data-f="open">免审核</button>
+    <button data-f="approval">需审核</button>
+    <button data-f="full">已满 / 候补</button>
+    <button data-f="official">官方</button>
+  </div>
+
+  <main id="list"></main>
+
+  <section class="leads">
+    <h2>未确认的线索</h2>
+    <ul>
+      <li><b>Sieve</b>：CoRL 赞助商，表示会期内办几场 researcher dinner，无公开报名，需私信或通过 <a href="https://sieve.ai/contact">sieve.ai/contact</a> 联系。（<a href="https://www.linkedin.com/posts/sievedata_were-excited-to-join-conference-on-robot-activity-7515501300399132673-Y0-U">来源</a>）</li>
+      <li><b>Bedrock Robotics「CoRL After Dark」</b>：仅在 X 搜索摘要中出现，时间、地点、报名链接未知，可能与 NVIDIA 合办的 Rainey Street 场为同一活动。</li>
+    </ul>
+  </section>
+
+  <section class="tips">
+    <h2>赶场建议</h2>
+    <ul>
+      <li><b>周二 11/10 晚</b>有 6 场撞在 18:00–21:00。见投资人 / 创业圈 → Robots On Rainey Street；研究交流加吃饭 → Saturday Robotics；想稳 → The Future of Robot Learning（免审核）。Dexmate 和 Gritt 都在 Congress Ave 附近，可以先去一场再赶下一场。</li>
+      <li><b>周三 11/11</b>：16:00 CRV（Rainey St）→ 18:00 Torc（就在主会场 Hilton 里）。</li>
+      <li>大部分活动需要主办方审核，名额在持续减少，越早报名越好。</li>
+      <li>会期内每天刷一下 <a href="https://luma.com/austin">luma.com/austin</a>，会有新活动出现。</li>
+    </ul>
+  </section>
+
+  <footer>
+    <p>信息来自 corl.org、Luma 公开页面、X 和 LinkedIn 公开帖子，人数和名额为 2026-11-02 的快照，以各活动页面为准。Partiful、微信群等邀请制活动无法检索，实际活动会更多。</p>
+    <p>非 CoRL 官方页面。</p>
+  </footer>
+</div>
+
+<script>
+// status: official | open | approval | full
+const EVENTS = [
+  { day: "11-09", start: "17:00", end: "19:00", title: "Rooftop Happy Hour: Physical AI Data & Sim Infra",
+    host: "AI Circle × Midcentury", place: "Congress Ave 一带屋顶（地址审核后可见）",
+    status: "approval", note: "30 人已报", url: "https://luma.com/u6rr5lql" },
+  { day: "11-09", start: "18:00", end: "20:00", title: "Gento Robotics Happy Hour",
+    host: "Gento Robotics · PokeBot、Calder 赞助", place: "Congress Ave 屋顶（地址审核后可见）",
+    status: "approval", note: "95 人已报 · 主会第一天后，不演讲不 pitch", url: "https://luma.com/6ua2bbzf" },
+  { day: "11-09", start: "19:00", end: "22:00", title: "官方欢迎晚宴",
+    host: "CoRL", place: "The Long Center, 701 W Riverside Dr",
+    status: "official", note: "餐车、现场音乐、机器人乐队 · 有接驳车", url: "https://www.corl.org/attending/venue-information" },
+
+  { day: "11-10", start: "12:00", end: "13:30", title: "Women & Allies Lunch",
+    host: "CoRL · Toyota Research Institute 赞助", place: "Hilton Austin（房间待定）",
+    status: "official", note: "Google 表单报名，限 80 人，先到先得", url: "https://forms.gle/ES3NnWmgJZDVpRJYA",
+    src: "https://www.corl.org/attending/women-and-allies-lunch" },
+  { day: "11-10", start: "12:00", end: "14:00", title: "the robotics decade: tasks — 创始人 / 研究者午餐",
+    host: "0 State（Scale AI、Palatial 列为合办）", place: "Waller Creek 一带屋顶",
+    status: "full", note: "已满，可排候补", url: "https://luma.com/l8lqxxwb" },
+  { day: "11-10", start: "18:00", end: "21:00", title: "Robots On Rainey Street: A Night at CoRL 2026",
+    host: "Samsung Next · Radical Ventures · NVIDIA · CoreWeave（W&B 也有宣传）", place: "Rainey Street（地址审核后可见）",
+    status: "approval", note: "名额较多（约剩 170），面向想创业的研究者和机器人创始人", url: "https://luma.com/fhjn0lmd" },
+  { day: "11-10", start: "18:00", end: "21:00", title: "Saturday Robotics CoRL 研究之夜 | Reading Club 38",
+    host: "Junfan Zhu × GenRobot", place: "6th St 一带 18 楼，离会场步行 6 分钟",
+    status: "open", note: "亚洲自助餐 + 闪电演讲 · 研究者免费 · 65 人已报 · 页面另写 17:30–21:30", url: "https://luma.com/x0kxyiv2" },
+  { day: "11-10", start: "18:30", end: "21:00", title: "Bots & Boots 🤖🤠 Dexmate CoRL Afterparty",
+    host: "Dexmate", place: "Speakeasy, 412 Congress Ave",
+    status: "approval", note: "84 人已报 · 现场有 Vega 人形机器人", url: "https://luma.com/7ihu11na" },
+  { day: "11-10", start: "18:30", end: "21:00", title: "The Future of Robot Learning",
+    host: "PyTorch ATX × Austin Robotics", place: "Antler VC, 800 Brazos St #340",
+    status: "open", note: "披萨 + 交流 + 圆桌 · 免费 · 84 人已报", url: "https://luma.com/zskz4acb" },
+  { day: "11-10", start: "19:00", end: "21:00", title: "Gritt Happy Hour @ CoRL 2026",
+    host: "Gritt AI", place: "离会场步行 3 分钟（地址审核后可见）",
+    status: "approval", note: "快满了，满后转候补", url: "https://luma.com/xldm6sep" },
+
+  { day: "11-11", start: "午后", end: "", title: "官方告别甜点招待会",
+    host: "CoRL", place: "Bass Concert Hall, UT Austin",
+    status: "official", note: "参会即可 · 具体时间以官方日程为准", url: "https://www.corl.org/attending/venue-information" },
+  { day: "11-11", start: "16:00", end: "19:00", title: "Physical AI Night",
+    host: "CRV × LanceDB × Orchestral Labs", place: "Rainey Street（地址审核后可见）",
+    status: "approval", note: "37 人已报 · 有 shuffleboard", url: "https://luma.com/e9menn5c" },
+  { day: "11-11", start: "17:30", end: "20:30", title: "Samsung Robotics: Night at CoRL",
+    host: "Samsung Research America", place: "Downtown Austin",
+    status: "full", note: "已满（80 人），可排候补", url: "https://luma.com/dw26an5o" },
+  { day: "11-11", start: "18:00", end: "20:00", title: "Torc Happy Hour @ CoRL",
+    host: "Torc Robotics", place: "Austin Taco Project, 500 E 4th St（Hilton 内）",
+    status: "approval", note: "TorcDrive 研究团队到场", url: "https://luma.com/torc_corl_2026" },
+  { day: "11-11", start: "18:30", end: "21:00", title: "Physical AI After Hours · CoRL Edition",
+    host: "Circuit Launch × AXIS Connect", place: "Texas Robotics, 2501 Wichita St（UT 校内）",
+    status: "approval", note: "读论文 + 真机 demo · 56 人已报", url: "https://luma.com/w88rdxbl" },
+];
+
+const DAYS = { "11-09": "11/9 周一", "11-10": "11/10 周二", "11-11": "11/11 周三" };
+const DAY_NOTE = { "11-10": "酒局最多的一天" };
+const LABEL = { official: "官方", open: "免审核", approval: "需审核", full: "已满 / 候补" };
+
+function esc(s) {
+  return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+}
+
+// CST = UTC-6 during the conference
+function gcalLink(e) {
+  if (!/^\d/.test(e.start)) return null;
+  const toUtc = t => {
+    const [h, m] = t.split(":").map(Number);
+    const d = new Date(Date.UTC(2026, Number(e.day.slice(0, 2)) - 1, Number(e.day.slice(3)), h + 6, m));
+    return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  };
+  const p = new URLSearchParams({
+    action: "TEMPLATE",
+    text: e.title,
+    dates: `${toUtc(e.start)}/${toUtc(e.end)}`,
+    details: `${e.host}\n${e.url}`,
+    location: e.place,
+  });
+  return "https://calendar.google.com/calendar/render?" + p.toString();
+}
+
+function render(filter) {
+  const list = document.getElementById("list");
+  let html = "";
+  for (const day of Object.keys(DAYS)) {
+    const items = EVENTS.filter(e => e.day === day && (filter === "all" || e.status === filter));
+    if (!items.length) continue;
+    html += `<h2 class="day">${DAYS[day]}<small>${DAY_NOTE[day] || ""}</small></h2>`;
+    for (const e of items) {
+      const cal = gcalLink(e);
+      html += `<article class="card">
+        <div class="time">${esc(e.start)}${e.end ? "–" + esc(e.end) : ""}</div>
+        <div class="title">${esc(e.title)}</div>
+        <div class="row meta">${esc(e.host)}</div>
+        <div class="row meta">📍 ${esc(e.place)}</div>
+        <div class="row tags"><span class="tag ${e.status}">${LABEL[e.status]}</span><span class="note">${esc(e.note)}</span></div>
+        <div class="row links">
+          <a href="${e.url}" target="_blank" rel="noopener">报名 / 详情 ↗</a>
+          ${e.src ? `<a href="${e.src}" target="_blank" rel="noopener">官方说明 ↗</a>` : ""}
+          ${cal ? `<a href="${cal}" target="_blank" rel="noopener">加入 Google 日历</a>` : ""}
+        </div>
+      </article>`;
+    }
+  }
+  list.innerHTML = html || `<p class="meta">没有符合条件的活动。</p>`;
+}
+
+const count = s => EVENTS.filter(e => e.status === s).length;
+document.getElementById("stats").innerHTML = [
+  [EVENTS.length, "场活动"],
+  [count("official"), "官方"],
+  [count("open"), "免审核"],
+  [count("approval"), "需审核"],
+  [count("full"), "已满可候补"],
+].map(([n, t]) => `<div class="stat"><b>${n}</b>${t}</div>`).join("");
+
+document.querySelectorAll(".filters button").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".filters button").forEach(b => b.setAttribute("aria-pressed", "false"));
+    btn.setAttribute("aria-pressed", "true");
+    render(btn.dataset.f);
+  });
+});
+render("all");
+</script>
+</body>
+</html>
