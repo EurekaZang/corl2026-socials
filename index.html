@@ -124,17 +124,6 @@
     font-size: 12px; font-weight: 500; line-height: 12px; color: var(--secondary);
     background: var(--switch-bg); padding: 4px 7px; border-radius: 4px; white-space: nowrap;
   }
-  .me {
-    display: inline-flex; align-items: center; gap: 5px;
-    font-size: 12px; font-weight: 500; line-height: 12px;
-    padding: 3px 7px; border-radius: 4px; border: 1px solid currentColor; white-space: nowrap;
-  }
-  .me::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-  .me.going { color: var(--green); }
-  .me.pending { color: var(--orange); }
-  .me.waitlist { color: var(--blue); }
-  .me.none { color: var(--tertiary); }
-  .me.none::before { background: transparent; border: 1px solid currentColor; width: 4px; height: 4px; }
   .count { font-size: 13px; color: var(--tertiary); }
   .cal {
     position: relative; z-index: 2; margin-left: auto;
@@ -223,17 +212,16 @@
 <script>
 // Times are conference-local (CST, UTC-6). status: official | open | approval | full
 // food: what the host's description says is provided
-// me: T.Z.'s Luma registration (going | pending | waitlist | none)
 // Text fields are either a plain string (same in both languages) or { en, zh }.
 const EVENTS = [
   { day: "11-09", start: "17:00", end: "19:00", title: "Rooftop Happy Hour: Physical AI Data & Sim Infra",
     host: "AI Circle × Midcentury",
     place: { en: "Rooftop near Congress Ave · address shown after approval", zh: "Congress Ave 一带屋顶 · 审核通过后显示地点" },
-    status: "approval", guests: 30, food: { en: "🥂 Drinks + bites", zh: "🥂 饮品 + 小食" }, me: "none", url: "https://luma.com/u6rr5lql", cover: "ng/bbb68891-a8b5-4966-b7df-9818f345ab6d.png" },
+    status: "approval", guests: 30, food: { en: "🥂 Drinks + bites", zh: "🥂 饮品 + 小食" }, url: "https://luma.com/u6rr5lql", cover: "ng/bbb68891-a8b5-4966-b7df-9818f345ab6d.png" },
   { day: "11-09", start: "18:00", end: "20:00", title: "Gento Robotics Happy Hour - CoRL 2026",
     host: "Gento Robotics", sponsor: { en: "PokeBot, Calder", zh: "PokeBot、Calder" },
     place: { en: "Congress Ave rooftop · address shown after approval", zh: "Congress Ave 屋顶 · 审核通过后显示地点" },
-    status: "approval", guests: 95, food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, me: "pending", url: "https://luma.com/6ua2bbzf", cover: "83/9a5173b0-4a5d-4c1e-ae31-79309570acfe.png" },
+    status: "approval", guests: 95, food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, url: "https://luma.com/6ua2bbzf", cover: "83/9a5173b0-4a5d-4c1e-ae31-79309570acfe.png" },
   { day: "11-09", start: "19:00", end: "22:00",
     title: { en: "Official Welcome Dinner · food trucks, live music, robot band", zh: "官方欢迎晚宴 · 餐车、现场音乐、机器人乐队" },
     host: "CoRL 2026",
@@ -248,25 +236,25 @@ const EVENTS = [
     title: { en: "the robotics decade: tasks — founder / researcher lunch", zh: "the robotics decade: tasks — 创始人 / 研究者午餐" },
     host: { en: "0 State · Scale AI, Palatial", zh: "0 State · Scale AI、Palatial" },
     place: { en: "Rooftop near Waller Creek · address shown after approval", zh: "Waller Creek 一带屋顶 · 审核通过后显示地点" },
-    status: "approval", food: { en: "🥗 Lunch", zh: "🥗 午餐" }, me: "pending", url: "https://luma.com/l8lqxxwb", cover: "st/9fd8fbe2-c919-4ac6-bcd5-5a89786892b9.png" },
+    status: "approval", food: { en: "🥗 Lunch", zh: "🥗 午餐" }, url: "https://luma.com/l8lqxxwb", cover: "st/9fd8fbe2-c919-4ac6-bcd5-5a89786892b9.png" },
   { day: "11-10", start: "18:00", end: "21:00", title: "Robots On Rainey Street: A Night at CoRL 2026",
     host: "Samsung Next · Radical Ventures · NVIDIA · CoreWeave",
     place: { en: "Rainey Street · address shown after approval", zh: "Rainey Street · 审核通过后显示地点" },
-    status: "approval", food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, me: "pending", url: "https://luma.com/fhjn0lmd", cover: "xt/c31b95f8-2618-4499-9ff6-2b5d94aaded5.png" },
+    status: "approval", food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, url: "https://luma.com/fhjn0lmd", cover: "xt/c31b95f8-2618-4499-9ff6-2b5d94aaded5.png" },
   { day: "11-10", start: "18:00", end: "21:00", title: "CoRL 2026 Junfan × GenRobot × Saturday Robotics Research Night",
     host: "Junfan Zhu · GenRobot · Saturday Robotics",
     place: { en: "18th floor near 6th St · 6-min walk from the venue", zh: "6th St 一带 18 楼 · 离会场步行 6 分钟" },
-    status: "open", guests: 73, food: { en: "🍱 Asian buffet dinner + drinks", zh: "🍱 亚洲自助晚餐 + 酒水" }, me: "going", url: "https://luma.com/x0kxyiv2", cover: "xy/8cdd7de1-a390-4419-a02e-e327613b0e8d.png" },
+    status: "open", guests: 73, food: { en: "🍱 Asian buffet dinner + drinks", zh: "🍱 亚洲自助晚餐 + 酒水" }, url: "https://luma.com/x0kxyiv2", cover: "xy/8cdd7de1-a390-4419-a02e-e327613b0e8d.png" },
   { day: "11-10", start: "18:30", end: "21:00", title: "Bots & Boots 🤖🤠 The Dexmate CoRL Afterparty",
     host: "Dexmate", place: "Speakeasy, 412 Congress Ave",
-    status: "approval", guests: 84, food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, me: "pending", url: "https://luma.com/7ihu11na", cover: "sc/817aa937-f044-4ad6-bc08-8b4b14d9fdac.png" },
+    status: "approval", guests: 84, food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, url: "https://luma.com/7ihu11na", cover: "sc/817aa937-f044-4ad6-bc08-8b4b14d9fdac.png" },
   { day: "11-10", start: "18:30", end: "21:00", title: "The Future of Robot Learning",
     host: "PyTorch ATX × Austin Robotics", place: "Antler VC, 800 Brazos St #340",
-    status: "open", guests: 85, food: { en: "🍕 Pizza + snacks + drinks", zh: "🍕 披萨 + 小食 + 饮品" }, me: "going", url: "https://luma.com/zskz4acb", cover: "7v/ce6b091b-81f7-4316-a620-0c6bc203a8c5.jpg" },
+    status: "open", guests: 85, food: { en: "🍕 Pizza + snacks + drinks", zh: "🍕 披萨 + 小食 + 饮品" }, url: "https://luma.com/zskz4acb", cover: "7v/ce6b091b-81f7-4316-a620-0c6bc203a8c5.jpg" },
   { day: "11-10", start: "19:00", end: "21:00", title: "Gritt Happy Hour @ CoRL 2026",
     host: "Gritt AI",
     place: { en: "3-min walk from the venue · address shown after approval", zh: "离会场步行 3 分钟 · 审核通过后显示地点" },
-    status: "approval", food: { en: "🍻 Drinks + appetizers", zh: "🍻 酒水 + 小食" }, me: "pending", url: "https://luma.com/xldm6sep", cover: "77/f31eb4cc-ce02-4d50-9583-1eaf11598abc.png" },
+    status: "approval", food: { en: "🍻 Drinks + appetizers", zh: "🍻 酒水 + 小食" }, url: "https://luma.com/xldm6sep", cover: "77/f31eb4cc-ce02-4d50-9583-1eaf11598abc.png" },
 
   { day: "11-11", start: "15:00", end: "17:00", approx: true,
     title: { en: "Official Farewell Dessert Reception", zh: "官方告别甜点招待会" },
@@ -275,17 +263,17 @@ const EVENTS = [
   { day: "11-11", start: "16:00", end: "19:00", title: "Physical AI Night",
     host: "CRV × LanceDB × Orchestral Labs",
     place: { en: "Rainey Street · address shown after approval", zh: "Rainey Street · 审核通过后显示地点" },
-    status: "approval", guests: 37, food: { en: "🍺 Drinks · food not mentioned", zh: "🍺 酒水 · 未提餐食" }, me: "pending", url: "https://luma.com/e9menn5c", cover: "lg/8d34f886-58c6-4076-ab78-2ae0de75a2a6.png" },
+    status: "approval", guests: 37, food: { en: "🍺 Drinks · food not mentioned", zh: "🍺 酒水 · 未提餐食" }, url: "https://luma.com/e9menn5c", cover: "lg/8d34f886-58c6-4076-ab78-2ae0de75a2a6.png" },
   { day: "11-11", start: "17:30", end: "20:30", title: "Samsung Robotics: Night at CoRL",
     host: "Samsung Research America", place: "Downtown Austin",
-    status: "full", guests: 80, food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, me: "waitlist", url: "https://luma.com/dw26an5o", cover: "rx/1f8df759-aacc-4d67-9a4e-aa08cd5a4d23.png" },
+    status: "full", guests: 80, food: { en: "🍻 Drinks + food", zh: "🍻 酒水 + 餐食" }, url: "https://luma.com/dw26an5o", cover: "rx/1f8df759-aacc-4d67-9a4e-aa08cd5a4d23.png" },
   { day: "11-11", start: "18:00", end: "20:00", title: "Torc Happy Hour @ CoRL",
     host: "Torc Robotics",
     place: { en: "Austin Taco Project, 500 E 4th St (inside the Hilton)", zh: "Austin Taco Project, 500 E 4th St（Hilton 内）" },
-    status: "approval", food: { en: "🍻 Drinks + appetizers", zh: "🍻 酒水 + 小食" }, me: "none", url: "https://luma.com/torc_corl_2026", cover: "ce/bf52a088-e26e-4065-85ec-fc3713ca86f7.png" },
+    status: "approval", food: { en: "🍻 Drinks + appetizers", zh: "🍻 酒水 + 小食" }, url: "https://luma.com/torc_corl_2026", cover: "ce/bf52a088-e26e-4065-85ec-fc3713ca86f7.png" },
   { day: "11-11", start: "18:30", end: "21:00", title: "Physical AI After Hours · CoRL Edition",
     host: "Circuit Launch × AXIS Connect", place: "Texas Robotics, 2501 Wichita St",
-    status: "approval", guests: 56, food: { en: "🍺 Beer · food not mentioned", zh: "🍺 啤酒 · 未提餐食" }, me: "going", url: "https://luma.com/w88rdxbl", cover: "bt/7b7ee200-856e-4ee4-9787-224ad5e58305.jpg" },
+    status: "approval", guests: 56, food: { en: "🍺 Beer · food not mentioned", zh: "🍺 啤酒 · 未提餐食" }, url: "https://luma.com/w88rdxbl", cover: "bt/7b7ee200-856e-4ee4-9787-224ad5e58305.jpg" },
 ];
 
 const DAYS = ["11-09", "11-10", "11-11"];
@@ -299,8 +287,6 @@ const T = {
     fAll: "All", fOpen: "Open RSVP", fApproval: "Approval", fFull: "Waitlist", fOfficial: "Official",
     filtersLabel: "Filter",
     label: { official: "Official", open: "Open RSVP", approval: "Needs approval", full: "Waitlist" },
-    me: { going: "T.Z. going", pending: "T.Z. pending", waitlist: "T.Z. waitlisted", none: "T.Z. not registered" },
-    meTitle: "T.Z.'s RSVP status on Luma",
     foodTitle: "Food and drinks the host says are provided",
     weekday: { "11-09": "Monday", "11-10": "Tuesday", "11-11": "Wednesday" },
     date: (mo, d) => `Nov ${d}`,
@@ -309,7 +295,7 @@ const T = {
     cal: "Calendar",
     approx: "Afternoon · see the official schedule",
     empty: "No events match this filter",
-    sub: (c, mine) => `Austin, TX · Nov 9–12 · ${c.total} events (${c.official} official, ${c.open} open RSVP) · Updated Nov 2 · T.Z.: ${mine.going} going, ${mine.pending} pending, ${mine.waitlist} waitlisted`,
+    sub: c => `Austin, TX · Nov 9–12 · ${c.total} events (${c.official} official, ${c.open} open RSVP) · Updated Nov 2`,
     leadsTitle: "Unconfirmed leads",
     leads: `<ul>
       <li><b>Sieve</b>: a CoRL sponsor that says it's hosting a few researcher dinners during the week. There's no public RSVP; DM them or reach out via <a href="https://sieve.ai/contact">sieve.ai/contact</a> (<a href="https://www.linkedin.com/posts/sievedata_were-excited-to-join-conference-on-robot-activity-7515501300399132673-Y0-U">source</a>).</li>
@@ -332,8 +318,6 @@ const T = {
     fAll: "全部", fOpen: "免审核", fApproval: "需审核", fFull: "候补", fOfficial: "官方",
     filtersLabel: "筛选",
     label: { official: "官方", open: "免审核", approval: "需审核", full: "候补名单" },
-    me: { going: "T.Z. 参加", pending: "T.Z. 待审核", waitlist: "T.Z. 候补中", none: "T.Z. 未报名" },
-    meTitle: "T.Z. 在 Luma 上的报名状态",
     foodTitle: "主办方描述中提到的吃喝",
     weekday: { "11-09": "星期一", "11-10": "星期二", "11-11": "星期三" },
     date: (mo, d) => `${mo}月${d}日`,
@@ -342,7 +326,7 @@ const T = {
     cal: "日历",
     approx: "下午 · 具体时间以官方日程为准",
     empty: "没有符合条件的活动",
-    sub: (c, mine) => `Austin, TX · 11月9日–12日 · ${c.total} 场活动（${c.official} 场官方、${c.open} 场免审核）· 数据更新于 11月2日 · T.Z.：${mine.going} 场参加、${mine.pending} 场待审核、${mine.waitlist} 场候补`,
+    sub: c => `Austin, TX · 11月9日–12日 · ${c.total} 场活动（${c.official} 场官方、${c.open} 场免审核）· 数据更新于 11月2日`,
     leadsTitle: "未确认的线索",
     leads: `<ul>
       <li><b>Sieve</b>：CoRL 赞助商，表示会期内办几场 researcher dinner，无公开报名，需私信或通过 <a href="https://sieve.ai/contact">sieve.ai/contact</a> 联系（<a href="https://www.linkedin.com/posts/sievedata_were-excited-to-join-conference-on-robot-activity-7515501300399132673-Y0-U">来源</a>）。</li>
@@ -436,7 +420,6 @@ function render() {
           <div class="meta">${ICON.host}<span>${esc(s.by(L(e.host), L(e.sponsor)))}</span></div>
           <div class="meta">${ICON.pin}<span>${esc(L(e.place))}</span></div>
           <div class="foot">
-            ${e.me ? `<span class="me ${e.me}" title="${esc(s.meTitle)}">${s.me[e.me]}</span>` : ""}
             <span class="pill ${e.status}">${s.label[e.status]}</span>
             ${e.food ? `<span class="food" title="${esc(s.foodTitle)}">${esc(L(e.food))}</span>` : ""}
             ${e.guests ? `<span class="count">${s.going(e.guests)}</span>` : ""}
@@ -461,10 +444,8 @@ function applyLang() {
   btn.textContent = s.langBtn;
   btn.lang = lang === "zh" ? "en" : "zh-CN";
   const count = st => EVENTS.filter(e => e.status === st).length;
-  const mine = st => EVENTS.filter(e => e.me === st).length;
   document.getElementById("sub").textContent = s.sub(
-    { total: EVENTS.length, official: count("official"), open: count("open") },
-    { going: mine("going"), pending: mine("pending"), waitlist: mine("waitlist") });
+    { total: EVENTS.length, official: count("official"), open: count("open") });
   render();
 }
 
