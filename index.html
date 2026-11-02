@@ -119,6 +119,10 @@
   .pill.approval { background: var(--orange); }
   .pill.full { background: var(--blue); }
   .pill.official { background: var(--purple); }
+  .food {
+    font-size: 12px; font-weight: 500; line-height: 12px; color: var(--secondary);
+    background: var(--switch-bg); padding: 4px 7px; border-radius: 4px; white-space: nowrap;
+  }
   .count { font-size: 13px; color: var(--tertiary); }
   .cal {
     position: relative; z-index: 2; margin-left: auto;
@@ -218,54 +222,55 @@
 
 <script>
 // Times are conference-local (CST, UTC-6). status: official | open | approval | full
+// food: what the host's description says is provided
 const EVENTS = [
   { day: "11-09", start: "17:00", end: "19:00", title: "Rooftop Happy Hour: Physical AI Data & Sim Infra",
     host: "AI Circle × Midcentury", place: "Congress Ave 一带屋顶 · 审核通过后显示地点",
-    status: "approval", guests: 30, url: "https://luma.com/u6rr5lql", cover: "ng/bbb68891-a8b5-4966-b7df-9818f345ab6d.png" },
+    status: "approval", guests: 30, food: "🥂 饮品 + 小食", url: "https://luma.com/u6rr5lql", cover: "ng/bbb68891-a8b5-4966-b7df-9818f345ab6d.png" },
   { day: "11-09", start: "18:00", end: "20:00", title: "Gento Robotics Happy Hour - CoRL 2026",
     host: "Gento Robotics", sponsor: "PokeBot、Calder", place: "Congress Ave 屋顶 · 审核通过后显示地点",
-    status: "approval", guests: 95, url: "https://luma.com/6ua2bbzf", cover: "83/9a5173b0-4a5d-4c1e-ae31-79309570acfe.png" },
+    status: "approval", guests: 95, food: "🍻 酒水 + 餐食", url: "https://luma.com/6ua2bbzf", cover: "83/9a5173b0-4a5d-4c1e-ae31-79309570acfe.png" },
   { day: "11-09", start: "19:00", end: "22:00", title: "官方欢迎晚宴 · 餐车、现场音乐、机器人乐队",
     host: "CoRL 2026", place: "The Long Center, 701 W Riverside Dr · 有接驳车",
-    status: "official", url: "https://www.corl.org/attending/venue-information", emoji: "🤠", gen: 1 },
+    status: "official", food: "🌮 餐车晚餐", url: "https://www.corl.org/attending/venue-information", emoji: "🤠", gen: 1 },
 
   { day: "11-10", start: "12:00", end: "13:30", title: "Women & Allies Lunch",
     host: "CoRL 2026", sponsor: "Toyota Research Institute", place: "Hilton Austin · Google 表单报名，限 80 人",
-    status: "official", url: "https://forms.gle/ES3NnWmgJZDVpRJYA", emoji: "🥗", gen: 2 },
+    status: "official", food: "🥗 午餐", url: "https://forms.gle/ES3NnWmgJZDVpRJYA", emoji: "🥗", gen: 2 },
   { day: "11-10", start: "12:00", end: "14:00", title: "the robotics decade: tasks — 创始人 / 研究者午餐",
     host: "0 State · Scale AI、Palatial", place: "Waller Creek 一带屋顶 · 审核通过后显示地点",
-    status: "full", url: "https://luma.com/l8lqxxwb", cover: "st/9fd8fbe2-c919-4ac6-bcd5-5a89786892b9.png" },
+    status: "full", food: "🥗 午餐", url: "https://luma.com/l8lqxxwb", cover: "st/9fd8fbe2-c919-4ac6-bcd5-5a89786892b9.png" },
   { day: "11-10", start: "18:00", end: "21:00", title: "Robots On Rainey Street: A Night at CoRL 2026",
     host: "Samsung Next · Radical Ventures · NVIDIA · CoreWeave", place: "Rainey Street · 审核通过后显示地点",
-    status: "approval", url: "https://luma.com/fhjn0lmd", cover: "xt/c31b95f8-2618-4499-9ff6-2b5d94aaded5.png" },
+    status: "approval", food: "🍻 酒水 + 餐食", url: "https://luma.com/fhjn0lmd", cover: "xt/c31b95f8-2618-4499-9ff6-2b5d94aaded5.png" },
   { day: "11-10", start: "18:00", end: "21:00", title: "CoRL 2026 Junfan × GenRobot × Saturday Robotics Research Night",
     host: "Junfan Zhu · GenRobot · Saturday Robotics", place: "6th St 一带 18 楼 · 离会场步行 6 分钟",
-    status: "open", guests: 71, url: "https://luma.com/x0kxyiv2", cover: "xy/8cdd7de1-a390-4419-a02e-e327613b0e8d.png" },
+    status: "open", guests: 71, food: "🍱 亚洲自助晚餐 + 酒水", url: "https://luma.com/x0kxyiv2", cover: "xy/8cdd7de1-a390-4419-a02e-e327613b0e8d.png" },
   { day: "11-10", start: "18:30", end: "21:00", title: "Bots & Boots 🤖🤠 The Dexmate CoRL Afterparty",
     host: "Dexmate", place: "Speakeasy, 412 Congress Ave",
-    status: "approval", guests: 84, url: "https://luma.com/7ihu11na", cover: "sc/817aa937-f044-4ad6-bc08-8b4b14d9fdac.png" },
+    status: "approval", guests: 84, food: "🍻 酒水 + 餐食", url: "https://luma.com/7ihu11na", cover: "sc/817aa937-f044-4ad6-bc08-8b4b14d9fdac.png" },
   { day: "11-10", start: "18:30", end: "21:00", title: "The Future of Robot Learning",
     host: "PyTorch ATX × Austin Robotics", place: "Antler VC, 800 Brazos St #340",
-    status: "open", guests: 85, url: "https://luma.com/zskz4acb", cover: "7v/ce6b091b-81f7-4316-a620-0c6bc203a8c5.jpg" },
+    status: "open", guests: 85, food: "🍕 披萨 + 小食 + 饮品", url: "https://luma.com/zskz4acb", cover: "7v/ce6b091b-81f7-4316-a620-0c6bc203a8c5.jpg" },
   { day: "11-10", start: "19:00", end: "21:00", title: "Gritt Happy Hour @ CoRL 2026",
     host: "Gritt AI", place: "离会场步行 3 分钟 · 审核通过后显示地点",
-    status: "approval", url: "https://luma.com/xldm6sep", cover: "77/f31eb4cc-ce02-4d50-9583-1eaf11598abc.png" },
+    status: "approval", food: "🍻 酒水 + 小食", url: "https://luma.com/xldm6sep", cover: "77/f31eb4cc-ce02-4d50-9583-1eaf11598abc.png" },
 
   { day: "11-11", start: "15:00", end: "17:00", approx: true, title: "官方告别甜点招待会",
     host: "CoRL 2026", place: "Bass Concert Hall, UT Austin",
-    status: "official", url: "https://www.corl.org/attending/venue-information", emoji: "🍰", gen: 3 },
+    status: "official", food: "🍰 甜点", url: "https://www.corl.org/attending/venue-information", emoji: "🍰", gen: 3 },
   { day: "11-11", start: "16:00", end: "19:00", title: "Physical AI Night",
     host: "CRV × LanceDB × Orchestral Labs", place: "Rainey Street · 审核通过后显示地点",
-    status: "approval", guests: 37, url: "https://luma.com/e9menn5c", cover: "lg/8d34f886-58c6-4076-ab78-2ae0de75a2a6.png" },
+    status: "approval", guests: 37, food: "🍺 酒水 · 未提餐食", url: "https://luma.com/e9menn5c", cover: "lg/8d34f886-58c6-4076-ab78-2ae0de75a2a6.png" },
   { day: "11-11", start: "17:30", end: "20:30", title: "Samsung Robotics: Night at CoRL",
     host: "Samsung Research America", place: "Downtown Austin",
-    status: "full", guests: 80, url: "https://luma.com/dw26an5o", cover: "rx/1f8df759-aacc-4d67-9a4e-aa08cd5a4d23.png" },
+    status: "full", guests: 80, food: "🍻 酒水 + 餐食", url: "https://luma.com/dw26an5o", cover: "rx/1f8df759-aacc-4d67-9a4e-aa08cd5a4d23.png" },
   { day: "11-11", start: "18:00", end: "20:00", title: "Torc Happy Hour @ CoRL",
     host: "Torc Robotics", place: "Austin Taco Project, 500 E 4th St（Hilton 内）",
-    status: "approval", url: "https://luma.com/torc_corl_2026", cover: "ce/bf52a088-e26e-4065-85ec-fc3713ca86f7.png" },
+    status: "approval", food: "🍻 酒水 + 小食", url: "https://luma.com/torc_corl_2026", cover: "ce/bf52a088-e26e-4065-85ec-fc3713ca86f7.png" },
   { day: "11-11", start: "18:30", end: "21:00", title: "Physical AI After Hours · CoRL Edition",
     host: "Circuit Launch × AXIS Connect", place: "Texas Robotics, 2501 Wichita St",
-    status: "approval", guests: 56, url: "https://luma.com/w88rdxbl", cover: "bt/7b7ee200-856e-4ee4-9787-224ad5e58305.jpg" },
+    status: "approval", guests: 56, food: "🍺 啤酒 · 未提餐食", url: "https://luma.com/w88rdxbl", cover: "bt/7b7ee200-856e-4ee4-9787-224ad5e58305.jpg" },
 ];
 
 const WEEKDAY = { "11-09": "星期一", "11-10": "星期二", "11-11": "星期三" };
@@ -332,6 +337,7 @@ function render(filter) {
           <div class="meta">${ICON.pin}<span>${esc(e.place)}</span></div>
           <div class="foot">
             <span class="pill ${e.status}">${LABEL[e.status]}</span>
+            ${e.food ? `<span class="food" title="主办方描述中提到的吃喝">${esc(e.food)}</span>` : ""}
             ${e.guests ? `<span class="count">${e.guests} 人参加</span>` : ""}
             ${e.approx ? "" : `<a class="cal" href="${gcalLink(e)}" target="_blank" rel="noopener">${ICON.cal}日历</a>`}
           </div>
