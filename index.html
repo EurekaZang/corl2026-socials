@@ -234,7 +234,7 @@
 <script>
 // Times are conference-local (CST, UTC-6). status: official | open | approval | full
 // food: what the host's description says is provided
-// me: Tianhao's Luma registration (going | pending | waitlist | none)
+// me: T.Z.'s Luma registration (going | pending | waitlist | none)
 const EVENTS = [
   { day: "11-09", start: "17:00", end: "19:00", title: "Rooftop Happy Hour: Physical AI Data & Sim Infra",
     host: "AI Circle × Midcentury", place: "Congress Ave 一带屋顶 · 审核通过后显示地点",
@@ -287,7 +287,7 @@ const EVENTS = [
 
 const WEEKDAY = { "11-09": "星期一", "11-10": "星期二", "11-11": "星期三" };
 const LABEL = { official: "官方", open: "免审核", approval: "需审核", full: "候补名单" };
-const ME = { going: "Tianhao 参加", pending: "Tianhao 待审核", waitlist: "Tianhao 候补中", none: "Tianhao 未报名" };
+const ME = { going: "T.Z. 参加", pending: "T.Z. 待审核", waitlist: "T.Z. 候补中", none: "T.Z. 未报名" };
 const CDN = "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=120,height=120/uploads/";
 
 const ICON = {
@@ -349,7 +349,7 @@ function render(filter) {
           <div class="meta">${ICON.host}<span>由 ${esc(e.host)} 主办${e.sponsor ? ` · ${esc(e.sponsor)} 赞助` : ""}</span></div>
           <div class="meta">${ICON.pin}<span>${esc(e.place)}</span></div>
           <div class="foot">
-            ${e.me ? `<span class="me ${e.me}" title="Tianhao 在 Luma 上的报名状态">${ME[e.me]}</span>` : ""}
+            ${e.me ? `<span class="me ${e.me}" title="T.Z. 在 Luma 上的报名状态">${ME[e.me]}</span>` : ""}
             <span class="pill ${e.status}">${LABEL[e.status]}</span>
             ${e.food ? `<span class="food" title="主办方描述中提到的吃喝">${esc(e.food)}</span>` : ""}
             ${e.guests ? `<span class="count">${e.guests} 人参加</span>` : ""}
@@ -369,7 +369,7 @@ document.getElementById("sub").textContent =
   `Austin, TX · 11月9日–12日 · ${EVENTS.length} 场活动（${n("official")} 场官方、${n("open")} 场免审核）· 数据更新于 11月2日`;
 const mine = s => EVENTS.filter(e => e.me === s).length;
 document.getElementById("sub").textContent +=
-  ` · Tianhao：${mine("going")} 场参加、${mine("pending")} 场待审核、${mine("waitlist")} 场候补`;
+  ` · T.Z.：${mine("going")} 场参加、${mine("pending")} 场待审核、${mine("waitlist")} 场候补`;
 
 function tick() {
   document.getElementById("clock").textContent = "Austin " + hm(new Date(), "America/Chicago");
