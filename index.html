@@ -7,248 +7,380 @@
 <meta name="description" content="CoRL 2026（Austin, Nov 9–12）官方社交活动与会外 happy hour / dinner / lunch 汇总">
 <style>
   :root {
-    --bg: #faf8f5;
-    --surface: #ffffff;
-    --text: #1d1b19;
-    --muted: #6b655e;
-    --line: #e7e1d8;
-    --accent: #bf5700;
-    --open: #1f7a4d;
-    --open-bg: #e3f3ea;
-    --approval: #8a5a00;
-    --approval-bg: #fbf0d9;
-    --full: #a33a3a;
-    --full-bg: #f8e3e3;
-    --official: #2f4f9e;
-    --official-bg: #e4eafa;
+    --page: #f8f8f8;
+    --card: rgba(255, 255, 255, 0.8);
+    --card-hover: #ffffff;
+    --card-border: #ffffff;
+    --text: rgb(21, 21, 21);
+    --secondary: #757575;
+    --tertiary: rgba(21, 21, 21, 0.36);
+    --faint: rgba(21, 21, 21, 0.04);
+    --line: rgba(21, 21, 21, 0.08);
+    --switch-bg: rgba(21, 21, 21, 0.04);
+    --switch-on: #ffffff;
+    --tz: rgb(214, 151, 18);
+    --orange: rgb(248, 113, 43);
+    --green: rgb(60, 189, 44);
+    --blue: rgb(20, 106, 235);
+    --purple: rgb(125, 83, 230);
+    --glow: linear-gradient(rgba(125, 83, 230, 0.2) 0%, rgba(57, 91, 242, 0.1) 50%, rgba(95, 121, 198, 0) 100%);
+    --shadow-hover: 0 1px 4px rgba(0, 0, 0, 0.04), 0 4px 16px rgba(0, 0, 0, 0.04);
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --bg: #151413;
-      --surface: #1f1d1b;
-      --text: #ece8e3;
-      --muted: #a39b92;
-      --line: #34302c;
-      --accent: #f08a3c;
-      --open: #6fd3a0;
-      --open-bg: #183a2a;
-      --approval: #f0c46a;
-      --approval-bg: #3a2f17;
-      --full: #f09a9a;
-      --full-bg: #3d1f1f;
-      --official: #9db4f0;
-      --official-bg: #1e2a47;
+      --page: #131517;
+      --card: rgba(255, 255, 255, 0.04);
+      --card-hover: rgba(255, 255, 255, 0.07);
+      --card-border: rgba(255, 255, 255, 0.04);
+      --text: rgba(255, 255, 255, 0.92);
+      --secondary: rgba(255, 255, 255, 0.64);
+      --tertiary: rgba(255, 255, 255, 0.4);
+      --faint: rgba(255, 255, 255, 0.04);
+      --line: rgba(255, 255, 255, 0.08);
+      --switch-bg: rgba(255, 255, 255, 0.06);
+      --switch-on: rgba(255, 255, 255, 0.12);
+      --tz: rgb(240, 186, 64);
+      --glow: linear-gradient(rgba(125, 83, 230, 0.28) 0%, rgba(57, 91, 242, 0.12) 50%, rgba(95, 121, 198, 0) 100%);
+      --shadow-hover: none;
     }
   }
   * { box-sizing: border-box; }
+  html { background: var(--page); }
   body {
     margin: 0;
-    background: var(--bg);
+    background: var(--page);
     color: var(--text);
-    font: 15px/1.6 -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Segoe UI", sans-serif;
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Inter", "PingFang SC", "Hiragino Sans GB", "Noto Sans SC", "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
   }
-  a { color: var(--accent); }
-  .wrap { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
-  header h1 { font-size: 28px; margin: 0 0 4px; letter-spacing: -0.01em; }
-  header .sub { color: var(--muted); margin: 0 0 16px; }
-  .stats { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-  .stat { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; }
-  .stat b { font-size: 18px; margin-right: 4px; }
-  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin: 0 0 24px; position: sticky; top: 0; background: var(--bg); padding: 10px 0; z-index: 1; }
-  .filters button {
-    font: inherit; font-size: 14px; cursor: pointer;
-    border: 1px solid var(--line); background: var(--surface); color: var(--text);
-    border-radius: 999px; padding: 4px 14px;
+  a { color: inherit; text-decoration: none; }
+  .glow { position: fixed; inset: 0 0 auto 0; height: 180px; background: var(--glow); pointer-events: none; z-index: 0; }
+
+  /* nav */
+  nav.top {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 16px; font-size: 14px; font-weight: 500;
   }
-  .filters button[aria-pressed="true"] { background: var(--text); color: var(--bg); border-color: var(--text); }
-  h2.day { font-size: 18px; margin: 28px 0 12px; padding-bottom: 6px; border-bottom: 2px solid var(--accent); }
-  h2.day small { color: var(--muted); font-weight: normal; font-size: 14px; margin-left: 8px; }
+  nav.top .brand { display: flex; align-items: center; gap: 8px; }
+  nav.top .brand svg { color: var(--tertiary); }
+  nav.top .right { display: flex; align-items: center; gap: 16px; color: var(--tertiary); }
+  .btn-ghost {
+    font: inherit; cursor: pointer; border: 0; color: var(--text);
+    background: var(--switch-bg); border-radius: 8px; padding: 4px 10px;
+  }
+  .btn-ghost:hover { background: var(--line); }
+
+  .page { position: relative; z-index: 1; max-width: 820px; margin: 0 auto; padding: 20px 16px 80px; }
+
+  /* header */
+  .head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  h1 { font-size: 28px; line-height: 1.2; font-weight: 600; margin: 0; }
+  .sub { color: var(--tertiary); margin: 6px 0 28px; font-size: 15px; }
+  .switcher { display: inline-flex; background: var(--switch-bg); border-radius: 16px; padding: 2px; max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .switcher::-webkit-scrollbar { display: none; }
+  .switcher button {
+    font: inherit; font-size: 14px; font-weight: 500; line-height: 21px; cursor: pointer;
+    border: 0; background: transparent; color: var(--tertiary);
+    padding: 5px 10px; border-radius: 14px; white-space: nowrap; transition: background .15s, color .15s;
+  }
+  .switcher button[aria-pressed="true"] { background: var(--switch-on); color: var(--text); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06); }
+
+  /* timeline */
+  .timeline { position: relative; }
+  .day { position: relative; display: grid; grid-template-columns: 144px 1fr; padding-bottom: 32px; }
+  .day::before { content: ""; position: absolute; left: 116px; top: 10px; bottom: -10px; border-left: 2px dashed var(--line); }
+  .day:last-child::before { bottom: 0; }
+  .day-label { position: sticky; top: 16px; align-self: start; }
+  .day-label::after { content: ""; position: absolute; left: 114px; top: 9px; width: 6px; height: 6px; border-radius: 50%; background: var(--tertiary); }
+  .day-label .date { font-weight: 500; }
+  .day-label .weekday { color: var(--tertiary); }
+  .cards { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
   .card {
-    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
-    padding: 14px 16px; margin-bottom: 10px;
-    display: grid; grid-template-columns: 112px 1fr; gap: 4px 16px;
+    position: relative; display: flex; gap: 16px;
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
+    padding: 12px 12px 12px 16px;
+    backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+    transition: background .15s, box-shadow .15s;
   }
-  .time { font-variant-numeric: tabular-nums; font-weight: 600; }
-  .title { font-weight: 600; font-size: 16px; }
-  .meta { color: var(--muted); font-size: 14px; }
-  .row { grid-column: 2; }
-  .tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 6px; }
-  .tag { font-size: 12px; padding: 1px 8px; border-radius: 6px; white-space: nowrap; }
-  .tag.open { color: var(--open); background: var(--open-bg); }
-  .tag.approval { color: var(--approval); background: var(--approval-bg); }
-  .tag.full { color: var(--full); background: var(--full-bg); }
-  .tag.official { color: var(--official); background: var(--official-bg); }
-  .links { display: flex; gap: 14px; flex-wrap: wrap; font-size: 14px; margin-top: 6px; }
-  .note { font-size: 13px; color: var(--muted); }
-  section.tips, section.leads, footer { margin-top: 36px; }
-  section h2 { font-size: 18px; }
-  ul { padding-left: 20px; }
-  footer { color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); padding-top: 16px; }
-  @media (max-width: 560px) {
-    .card { grid-template-columns: 1fr; }
-    .row { grid-column: 1; }
+  .card:hover { background: var(--card-hover); box-shadow: var(--shadow-hover); }
+  .card .body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .time { color: var(--tertiary); }
+  .time .tz { color: var(--tz); }
+  .card h3 { font-size: 20px; line-height: 24px; font-weight: 500; margin: 0 0 4px; }
+  .card h3 a::after { content: ""; position: absolute; inset: 0; border-radius: inherit; }
+  .meta { display: flex; align-items: center; gap: 6px; color: var(--tertiary); font-size: 15px; line-height: 22px; min-width: 0; }
+  .meta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .meta svg { flex: none; }
+  .foot { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .pill { font-size: 12px; font-weight: 500; line-height: 12px; color: #fff; padding: 4px 7px; border-radius: 4px; }
+  .pill.open { background: var(--green); }
+  .pill.approval { background: var(--orange); }
+  .pill.full { background: var(--blue); }
+  .pill.official { background: var(--purple); }
+  .count { font-size: 13px; color: var(--tertiary); }
+  .cal {
+    position: relative; z-index: 2; margin-left: auto;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 13px; color: var(--tertiary); padding: 2px 8px; border-radius: 8px;
+  }
+  .cal:hover { color: var(--text); background: var(--faint); }
+
+  .cover {
+    flex: none; width: 120px; height: 120px; border-radius: 12px; overflow: hidden;
+    background: var(--faint); border: 1px solid var(--faint);
+    display: grid; place-items: center; font-size: 44px;
+  }
+  .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .cover.gen-1 { background: linear-gradient(135deg, #ffb36b, #f3527c); }
+  .cover.gen-2 { background: linear-gradient(135deg, #8ec5ff, #7d53e6); }
+  .cover.gen-3 { background: linear-gradient(135deg, #ffd27a, #ff8a5c); }
+
+  /* side sections */
+  .section-title { font-size: 20px; font-weight: 600; margin: 24px 0 12px; }
+  .note-card {
+    background: var(--card); border: 1px solid var(--card-border); border-radius: 16px;
+    padding: 16px; margin-bottom: 12px; color: var(--secondary); font-size: 15px;
+  }
+  .note-card b { color: var(--text); font-weight: 500; }
+  .note-card ul { margin: 0; padding-left: 18px; }
+  .note-card li + li { margin-top: 8px; }
+  .note-card a { color: var(--purple); }
+  footer { color: var(--tertiary); font-size: 13px; margin-top: 32px; }
+  .empty { color: var(--tertiary); padding: 40px 0; text-align: center; }
+
+  @media (max-width: 640px) {
+    .day { grid-template-columns: 1fr; padding-bottom: 24px; }
+    .day::before, .day-label::after { display: none; }
+    .day-label { position: sticky; top: 0; z-index: 3; background: var(--page); padding: 8px 0; margin-bottom: 4px; display: flex; gap: 8px; }
+    .card { padding: 12px; gap: 12px; }
+    .card h3 { font-size: 17px; line-height: 22px; }
+    .cover { width: 80px; height: 80px; font-size: 32px; }
+    .meta { font-size: 14px; align-items: flex-start; }
+    .meta svg { margin-top: 3px; }
+    .meta span { white-space: normal; }
+    nav.top .clock { display: none; }
   }
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <h1>CoRL 2026 酒局饭局</h1>
-    <p class="sub">Austin, TX · 主会 11/9–11 · Workshop 11/12 · 时间均为美国中部时间（CST）· 数据更新于 2026-11-02</p>
-    <div class="stats" id="stats"></div>
-  </header>
+<div class="glow"></div>
 
-  <div class="filters" role="group" aria-label="筛选">
-    <button data-f="all" aria-pressed="true">全部</button>
-    <button data-f="open">免审核</button>
-    <button data-f="approval">需审核</button>
-    <button data-f="full">已满 / 候补</button>
-    <button data-f="official">官方</button>
+<nav class="top">
+  <div class="brand">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+    <span>CoRL 2026 Socials</span>
   </div>
+  <div class="right">
+    <span class="clock" id="clock"></span>
+    <button class="btn-ghost" id="ics">全部加入日历</button>
+  </div>
+</nav>
 
-  <main id="list"></main>
+<div class="page">
+  <div class="head">
+    <h1>CoRL 2026 酒局饭局</h1>
+    <div class="switcher" role="group" aria-label="筛选">
+      <button data-f="all" aria-pressed="true">全部</button>
+      <button data-f="open">免审核</button>
+      <button data-f="approval">需审核</button>
+      <button data-f="full">候补</button>
+      <button data-f="official">官方</button>
+    </div>
+  </div>
+  <p class="sub" id="sub"></p>
 
-  <section class="leads">
-    <h2>未确认的线索</h2>
+  <main class="timeline" id="list"></main>
+
+  <h2 class="section-title">未确认的线索</h2>
+  <div class="note-card">
     <ul>
-      <li><b>Sieve</b>：CoRL 赞助商，表示会期内办几场 researcher dinner，无公开报名，需私信或通过 <a href="https://sieve.ai/contact">sieve.ai/contact</a> 联系。（<a href="https://www.linkedin.com/posts/sievedata_were-excited-to-join-conference-on-robot-activity-7515501300399132673-Y0-U">来源</a>）</li>
+      <li><b>Sieve</b>：CoRL 赞助商，表示会期内办几场 researcher dinner，无公开报名，需私信或通过 <a href="https://sieve.ai/contact">sieve.ai/contact</a> 联系（<a href="https://www.linkedin.com/posts/sievedata_were-excited-to-join-conference-on-robot-activity-7515501300399132673-Y0-U">来源</a>）。</li>
       <li><b>Bedrock Robotics「CoRL After Dark」</b>：仅在 X 搜索摘要中出现，时间、地点、报名链接未知，可能与 NVIDIA 合办的 Rainey Street 场为同一活动。</li>
     </ul>
-  </section>
+  </div>
 
-  <section class="tips">
-    <h2>赶场建议</h2>
+  <h2 class="section-title">赶场建议</h2>
+  <div class="note-card">
     <ul>
       <li><b>周二 11/10 晚</b>有 6 场撞在 18:00–21:00。见投资人 / 创业圈 → Robots On Rainey Street；研究交流加吃饭 → Saturday Robotics；想稳 → The Future of Robot Learning（免审核）。Dexmate 和 Gritt 都在 Congress Ave 附近，可以先去一场再赶下一场。</li>
       <li><b>周三 11/11</b>：16:00 CRV（Rainey St）→ 18:00 Torc（就在主会场 Hilton 里）。</li>
       <li>大部分活动需要主办方审核，名额在持续减少，越早报名越好。</li>
       <li>会期内每天刷一下 <a href="https://luma.com/austin">luma.com/austin</a>，会有新活动出现。</li>
     </ul>
-  </section>
+  </div>
 
   <footer>
-    <p>信息来自 corl.org、Luma 公开页面、X 和 LinkedIn 公开帖子，人数和名额为 2026-11-02 的快照，以各活动页面为准。Partiful、微信群等邀请制活动无法检索，实际活动会更多。</p>
-    <p>非 CoRL 官方页面。</p>
+    <p>信息来自 corl.org、Luma 公开页面、X 和 LinkedIn 公开帖子；人数和名额为 2026-11-02 的快照，以各活动页面为准。Partiful、微信群等邀请制活动无法检索，实际活动会更多。非 CoRL 或 Luma 官方页面。</p>
   </footer>
 </div>
 
 <script>
-// status: official | open | approval | full
+// Times are conference-local (CST, UTC-6). status: official | open | approval | full
 const EVENTS = [
   { day: "11-09", start: "17:00", end: "19:00", title: "Rooftop Happy Hour: Physical AI Data & Sim Infra",
-    host: "AI Circle × Midcentury", place: "Congress Ave 一带屋顶（地址审核后可见）",
-    status: "approval", note: "30 人已报", url: "https://luma.com/u6rr5lql" },
-  { day: "11-09", start: "18:00", end: "20:00", title: "Gento Robotics Happy Hour",
-    host: "Gento Robotics · PokeBot、Calder 赞助", place: "Congress Ave 屋顶（地址审核后可见）",
-    status: "approval", note: "95 人已报 · 主会第一天后，不演讲不 pitch", url: "https://luma.com/6ua2bbzf" },
-  { day: "11-09", start: "19:00", end: "22:00", title: "官方欢迎晚宴",
-    host: "CoRL", place: "The Long Center, 701 W Riverside Dr",
-    status: "official", note: "餐车、现场音乐、机器人乐队 · 有接驳车", url: "https://www.corl.org/attending/venue-information" },
+    host: "AI Circle × Midcentury", place: "Congress Ave 一带屋顶 · 审核通过后显示地点",
+    status: "approval", guests: 30, url: "https://luma.com/u6rr5lql", cover: "ng/bbb68891-a8b5-4966-b7df-9818f345ab6d.png" },
+  { day: "11-09", start: "18:00", end: "20:00", title: "Gento Robotics Happy Hour - CoRL 2026",
+    host: "Gento Robotics", sponsor: "PokeBot、Calder", place: "Congress Ave 屋顶 · 审核通过后显示地点",
+    status: "approval", guests: 95, url: "https://luma.com/6ua2bbzf", cover: "83/9a5173b0-4a5d-4c1e-ae31-79309570acfe.png" },
+  { day: "11-09", start: "19:00", end: "22:00", title: "官方欢迎晚宴 · 餐车、现场音乐、机器人乐队",
+    host: "CoRL 2026", place: "The Long Center, 701 W Riverside Dr · 有接驳车",
+    status: "official", url: "https://www.corl.org/attending/venue-information", emoji: "🤠", gen: 1 },
 
   { day: "11-10", start: "12:00", end: "13:30", title: "Women & Allies Lunch",
-    host: "CoRL · Toyota Research Institute 赞助", place: "Hilton Austin（房间待定）",
-    status: "official", note: "Google 表单报名，限 80 人，先到先得", url: "https://forms.gle/ES3NnWmgJZDVpRJYA",
-    src: "https://www.corl.org/attending/women-and-allies-lunch" },
+    host: "CoRL 2026", sponsor: "Toyota Research Institute", place: "Hilton Austin · Google 表单报名，限 80 人",
+    status: "official", url: "https://forms.gle/ES3NnWmgJZDVpRJYA", emoji: "🥗", gen: 2 },
   { day: "11-10", start: "12:00", end: "14:00", title: "the robotics decade: tasks — 创始人 / 研究者午餐",
-    host: "0 State（Scale AI、Palatial 列为合办）", place: "Waller Creek 一带屋顶",
-    status: "full", note: "已满，可排候补", url: "https://luma.com/l8lqxxwb" },
+    host: "0 State · Scale AI、Palatial", place: "Waller Creek 一带屋顶 · 审核通过后显示地点",
+    status: "full", url: "https://luma.com/l8lqxxwb", cover: "st/9fd8fbe2-c919-4ac6-bcd5-5a89786892b9.png" },
   { day: "11-10", start: "18:00", end: "21:00", title: "Robots On Rainey Street: A Night at CoRL 2026",
-    host: "Samsung Next · Radical Ventures · NVIDIA · CoreWeave（W&B 也有宣传）", place: "Rainey Street（地址审核后可见）",
-    status: "approval", note: "名额较多（约剩 170），面向想创业的研究者和机器人创始人", url: "https://luma.com/fhjn0lmd" },
-  { day: "11-10", start: "18:00", end: "21:00", title: "Saturday Robotics CoRL 研究之夜 | Reading Club 38",
-    host: "Junfan Zhu × GenRobot", place: "6th St 一带 18 楼，离会场步行 6 分钟",
-    status: "open", note: "亚洲自助餐 + 闪电演讲 · 研究者免费 · 65 人已报 · 页面另写 17:30–21:30", url: "https://luma.com/x0kxyiv2" },
-  { day: "11-10", start: "18:30", end: "21:00", title: "Bots & Boots 🤖🤠 Dexmate CoRL Afterparty",
+    host: "Samsung Next · Radical Ventures · NVIDIA · CoreWeave", place: "Rainey Street · 审核通过后显示地点",
+    status: "approval", url: "https://luma.com/fhjn0lmd", cover: "xt/c31b95f8-2618-4499-9ff6-2b5d94aaded5.png" },
+  { day: "11-10", start: "18:00", end: "21:00", title: "CoRL 2026 Junfan × GenRobot × Saturday Robotics Research Night",
+    host: "Junfan Zhu · GenRobot · Saturday Robotics", place: "6th St 一带 18 楼 · 离会场步行 6 分钟",
+    status: "open", guests: 71, url: "https://luma.com/x0kxyiv2", cover: "xy/8cdd7de1-a390-4419-a02e-e327613b0e8d.png" },
+  { day: "11-10", start: "18:30", end: "21:00", title: "Bots & Boots 🤖🤠 The Dexmate CoRL Afterparty",
     host: "Dexmate", place: "Speakeasy, 412 Congress Ave",
-    status: "approval", note: "84 人已报 · 现场有 Vega 人形机器人", url: "https://luma.com/7ihu11na" },
+    status: "approval", guests: 84, url: "https://luma.com/7ihu11na", cover: "sc/817aa937-f044-4ad6-bc08-8b4b14d9fdac.png" },
   { day: "11-10", start: "18:30", end: "21:00", title: "The Future of Robot Learning",
     host: "PyTorch ATX × Austin Robotics", place: "Antler VC, 800 Brazos St #340",
-    status: "open", note: "披萨 + 交流 + 圆桌 · 免费 · 84 人已报", url: "https://luma.com/zskz4acb" },
+    status: "open", guests: 85, url: "https://luma.com/zskz4acb", cover: "7v/ce6b091b-81f7-4316-a620-0c6bc203a8c5.jpg" },
   { day: "11-10", start: "19:00", end: "21:00", title: "Gritt Happy Hour @ CoRL 2026",
-    host: "Gritt AI", place: "离会场步行 3 分钟（地址审核后可见）",
-    status: "approval", note: "快满了，满后转候补", url: "https://luma.com/xldm6sep" },
+    host: "Gritt AI", place: "离会场步行 3 分钟 · 审核通过后显示地点",
+    status: "approval", url: "https://luma.com/xldm6sep", cover: "77/f31eb4cc-ce02-4d50-9583-1eaf11598abc.png" },
 
-  { day: "11-11", start: "午后", end: "", title: "官方告别甜点招待会",
-    host: "CoRL", place: "Bass Concert Hall, UT Austin",
-    status: "official", note: "参会即可 · 具体时间以官方日程为准", url: "https://www.corl.org/attending/venue-information" },
+  { day: "11-11", start: "15:00", end: "17:00", approx: true, title: "官方告别甜点招待会",
+    host: "CoRL 2026", place: "Bass Concert Hall, UT Austin",
+    status: "official", url: "https://www.corl.org/attending/venue-information", emoji: "🍰", gen: 3 },
   { day: "11-11", start: "16:00", end: "19:00", title: "Physical AI Night",
-    host: "CRV × LanceDB × Orchestral Labs", place: "Rainey Street（地址审核后可见）",
-    status: "approval", note: "37 人已报 · 有 shuffleboard", url: "https://luma.com/e9menn5c" },
+    host: "CRV × LanceDB × Orchestral Labs", place: "Rainey Street · 审核通过后显示地点",
+    status: "approval", guests: 37, url: "https://luma.com/e9menn5c", cover: "lg/8d34f886-58c6-4076-ab78-2ae0de75a2a6.png" },
   { day: "11-11", start: "17:30", end: "20:30", title: "Samsung Robotics: Night at CoRL",
     host: "Samsung Research America", place: "Downtown Austin",
-    status: "full", note: "已满（80 人），可排候补", url: "https://luma.com/dw26an5o" },
+    status: "full", guests: 80, url: "https://luma.com/dw26an5o", cover: "rx/1f8df759-aacc-4d67-9a4e-aa08cd5a4d23.png" },
   { day: "11-11", start: "18:00", end: "20:00", title: "Torc Happy Hour @ CoRL",
     host: "Torc Robotics", place: "Austin Taco Project, 500 E 4th St（Hilton 内）",
-    status: "approval", note: "TorcDrive 研究团队到场", url: "https://luma.com/torc_corl_2026" },
+    status: "approval", url: "https://luma.com/torc_corl_2026", cover: "ce/bf52a088-e26e-4065-85ec-fc3713ca86f7.png" },
   { day: "11-11", start: "18:30", end: "21:00", title: "Physical AI After Hours · CoRL Edition",
-    host: "Circuit Launch × AXIS Connect", place: "Texas Robotics, 2501 Wichita St（UT 校内）",
-    status: "approval", note: "读论文 + 真机 demo · 56 人已报", url: "https://luma.com/w88rdxbl" },
+    host: "Circuit Launch × AXIS Connect", place: "Texas Robotics, 2501 Wichita St",
+    status: "approval", guests: 56, url: "https://luma.com/w88rdxbl", cover: "bt/7b7ee200-856e-4ee4-9787-224ad5e58305.jpg" },
 ];
 
-const DAYS = { "11-09": "11/9 周一", "11-10": "11/10 周二", "11-11": "11/11 周三" };
-const DAY_NOTE = { "11-10": "酒局最多的一天" };
-const LABEL = { official: "官方", open: "免审核", approval: "需审核", full: "已满 / 候补" };
+const WEEKDAY = { "11-09": "星期一", "11-10": "星期二", "11-11": "星期三" };
+const LABEL = { official: "官方", open: "免审核", approval: "需审核", full: "候补名单" };
+const CDN = "https://images.lumacdn.com/cdn-cgi/image/format=auto,fit=cover,dpr=2,background=white,quality=75,width=120,height=120/uploads/";
+
+const ICON = {
+  host: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',
+  pin: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg>',
+  cal: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18M12 14v4M10 16h4"/></svg>',
+};
 
 function esc(s) {
   return String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
 
-// CST = UTC-6 during the conference
+function toDate(day, hm) {
+  const [h, m] = hm.split(":").map(Number);
+  return new Date(Date.UTC(2026, Number(day.slice(0, 2)) - 1, Number(day.slice(3)), h + 6, m));
+}
+const stamp = d => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+const hm = (d, tz) => new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", hour12: false, timeZone: tz }).format(d);
+
+// Like Luma: viewer's local time first; if they're not on Austin time, add the event-local time in amber.
+function timeLabel(e) {
+  if (e.approx) return "下午 · 具体时间以官方日程为准";
+  const d = toDate(e.day, e.start);
+  const local = hm(d);
+  const austin = hm(d, "America/Chicago");
+  return local === austin ? esc(local) : `${esc(local)} · <span class="tz">GMT-6 ${esc(austin)}</span>`;
+}
+
 function gcalLink(e) {
-  if (!/^\d/.test(e.start)) return null;
-  const toUtc = t => {
-    const [h, m] = t.split(":").map(Number);
-    const d = new Date(Date.UTC(2026, Number(e.day.slice(0, 2)) - 1, Number(e.day.slice(3)), h + 6, m));
-    return d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
-  };
   const p = new URLSearchParams({
     action: "TEMPLATE",
     text: e.title,
-    dates: `${toUtc(e.start)}/${toUtc(e.end)}`,
+    dates: `${stamp(toDate(e.day, e.start))}/${stamp(toDate(e.day, e.end))}`,
     details: `${e.host}\n${e.url}`,
     location: e.place,
   });
   return "https://calendar.google.com/calendar/render?" + p.toString();
 }
 
-function render(filter) {
-  const list = document.getElementById("list");
-  let html = "";
-  for (const day of Object.keys(DAYS)) {
-    const items = EVENTS.filter(e => e.day === day && (filter === "all" || e.status === filter));
-    if (!items.length) continue;
-    html += `<h2 class="day">${DAYS[day]}<small>${DAY_NOTE[day] || ""}</small></h2>`;
-    for (const e of items) {
-      const cal = gcalLink(e);
-      html += `<article class="card">
-        <div class="time">${esc(e.start)}${e.end ? "–" + esc(e.end) : ""}</div>
-        <div class="title">${esc(e.title)}</div>
-        <div class="row meta">${esc(e.host)}</div>
-        <div class="row meta">📍 ${esc(e.place)}</div>
-        <div class="row tags"><span class="tag ${e.status}">${LABEL[e.status]}</span><span class="note">${esc(e.note)}</span></div>
-        <div class="row links">
-          <a href="${e.url}" target="_blank" rel="noopener">报名 / 详情 ↗</a>
-          ${e.src ? `<a href="${e.src}" target="_blank" rel="noopener">官方说明 ↗</a>` : ""}
-          ${cal ? `<a href="${cal}" target="_blank" rel="noopener">加入 Google 日历</a>` : ""}
-        </div>
-      </article>`;
-    }
-  }
-  list.innerHTML = html || `<p class="meta">没有符合条件的活动。</p>`;
+function cover(e) {
+  if (e.cover) return `<div class="cover"><img loading="lazy" alt="" src="${CDN}${e.cover}" onerror="this.remove()"></div>`;
+  return `<div class="cover gen-${e.gen}">${e.emoji}</div>`;
 }
 
-const count = s => EVENTS.filter(e => e.status === s).length;
-document.getElementById("stats").innerHTML = [
-  [EVENTS.length, "场活动"],
-  [count("official"), "官方"],
-  [count("open"), "免审核"],
-  [count("approval"), "需审核"],
-  [count("full"), "已满可候补"],
-].map(([n, t]) => `<div class="stat"><b>${n}</b>${t}</div>`).join("");
+function render(filter) {
+  let html = "";
+  for (const day of Object.keys(WEEKDAY)) {
+    const items = EVENTS.filter(e => e.day === day && (filter === "all" || e.status === filter));
+    if (!items.length) continue;
+    const [mo, d] = day.split("-").map(Number);
+    html += `<section class="day">
+      <div class="day-label"><div class="date">${mo}月${d}日</div><div class="weekday">${WEEKDAY[day]}</div></div>
+      <div class="cards">`;
+    for (const e of items) {
+      html += `<article class="card">
+        <div class="body">
+          <div class="time">${timeLabel(e)}</div>
+          <h3><a href="${e.url}" target="_blank" rel="noopener">${esc(e.title)}</a></h3>
+          <div class="meta">${ICON.host}<span>由 ${esc(e.host)} 主办${e.sponsor ? ` · ${esc(e.sponsor)} 赞助` : ""}</span></div>
+          <div class="meta">${ICON.pin}<span>${esc(e.place)}</span></div>
+          <div class="foot">
+            <span class="pill ${e.status}">${LABEL[e.status]}</span>
+            ${e.guests ? `<span class="count">${e.guests} 人参加</span>` : ""}
+            ${e.approx ? "" : `<a class="cal" href="${gcalLink(e)}" target="_blank" rel="noopener">${ICON.cal}日历</a>`}
+          </div>
+        </div>
+        ${cover(e)}
+      </article>`;
+    }
+    html += `</div></section>`;
+  }
+  document.getElementById("list").innerHTML = html || `<p class="empty">没有符合条件的活动</p>`;
+}
 
-document.querySelectorAll(".filters button").forEach(btn => {
+const n = s => EVENTS.filter(e => e.status === s).length;
+document.getElementById("sub").textContent =
+  `Austin, TX · 11月9日–12日 · ${EVENTS.length} 场活动（${n("official")} 场官方、${n("open")} 场免审核）· 数据更新于 11月2日`;
+
+function tick() {
+  document.getElementById("clock").textContent = "Austin " + hm(new Date(), "America/Chicago");
+}
+tick();
+setInterval(tick, 30000);
+
+document.getElementById("ics").addEventListener("click", () => {
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//corl2026-socials//CN"];
+  const icsEsc = s => String(s).replace(/[\\,;]/g, m => "\\" + m).replace(/\n/g, "\\n");
+  for (const e of EVENTS) {
+    if (e.approx) continue;
+    lines.push("BEGIN:VEVENT",
+      `UID:${e.day}-${e.start}-${encodeURIComponent(e.url)}@corl2026-socials`,
+      `DTSTAMP:${stamp(new Date())}`,
+      `DTSTART:${stamp(toDate(e.day, e.start))}`,
+      `DTEND:${stamp(toDate(e.day, e.end))}`,
+      `SUMMARY:${icsEsc(e.title)}`,
+      `LOCATION:${icsEsc(e.place)}`,
+      `DESCRIPTION:${icsEsc(e.host + "\n" + LABEL[e.status] + "\n" + e.url)}`,
+      `URL:${e.url}`,
+      "END:VEVENT");
+  }
+  lines.push("END:VCALENDAR");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\r\n")], { type: "text/calendar" }));
+  a.download = "corl2026-socials.ics";
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+document.querySelectorAll(".switcher button").forEach(btn => {
   btn.addEventListener("click", () => {
-    document.querySelectorAll(".filters button").forEach(b => b.setAttribute("aria-pressed", "false"));
+    document.querySelectorAll(".switcher button").forEach(b => b.setAttribute("aria-pressed", "false"));
     btn.setAttribute("aria-pressed", "true");
     render(btn.dataset.f);
   });
